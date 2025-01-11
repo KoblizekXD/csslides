@@ -63,4 +63,7 @@ export default {
   	}
   },
   plugins: [require("tailwindcss-animate")],
+	safelist: [{ // Disables Tailwind's purging unused CSS, remove if causes lag?
+		pattern: /bg-*/
+	}]
 } satisfies Config;
