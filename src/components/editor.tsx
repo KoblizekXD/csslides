@@ -6,10 +6,11 @@ import { githubDarkInit } from '@uiw/codemirror-theme-github'
 
 interface EditorProps {
   onChange?: (value: string, viewUpdate: ViewUpdate) => void;
+  defaultValue?: string;
 }
 
-export const Editor = ({ onChange }: EditorProps) => {
-  return <CodeMirror onChange={onChange} className='h-full' extensions={[html()]} theme={githubDarkInit({
+export const Editor = ({ onChange, defaultValue }: EditorProps) => {
+  return <CodeMirror value={defaultValue} onChange={onChange} className='h-full' extensions={[html()]} theme={githubDarkInit({
     settings: {
       fontFamily: 'JetBrains Mono',
       fontSize: 14,

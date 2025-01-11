@@ -14,12 +14,32 @@ import {
   MenubarTrigger,
 } from "@/components/ui/menubar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import DOMPurify from "dompurify";
+import { getById, replaceProject } from "@/lib/ls-util";
 import { Play } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { PresentationInformation } from "../recent/recent";
 
-export default function App() {
+export interface Slide {
+  name: string;
+  html: string;
+  styles: string;
+}
+
+export default function App({ id }: { id: string }) {
+  const [presentation, setPresentation] = useState<
+    PresentationInformation | undefined
+  >(undefined);
   const [html, setHtml] = useState("");
+
+  useEffect(() => {
+    setPresentation(getById(id));
+  }, []);
+
+  useEffect(() => {
+    if (!presentation) return;
+    replaceProject(presentation);
+    setHtml(presentation.html);
+  }, [presentation]);
 
   return (
     <main className="flex p-1 gap-y-1 flex-col h-screen bg-background">
@@ -62,8 +82,15 @@ export default function App() {
             </TabsList>
             <TabsContent value="html">
               <Editor
+                defaultValue={html}
                 onChange={(text) => {
-                  setHtml(DOMPurify.sanitize(text));
+                  setPresentation((prev) => {
+                    if (!prev) return prev;
+                    return {
+                      ...prev,
+                      html: text,
+                    };
+                  });
                 }}
               />
             </TabsContent>
