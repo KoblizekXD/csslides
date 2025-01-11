@@ -55,7 +55,11 @@ export default {
   			lg: 'var(--radius)',
   			md: 'calc(var(--radius) - 2px)',
   			sm: 'calc(var(--radius) - 4px)'
-  		}
+  		},
+			fontFamily: {
+				mono: ['var(--font-jetbrains-mono)'],
+				sans: ['var(--font-inter)']
+			},
   	}
   },
   plugins: [require("tailwindcss-animate")],

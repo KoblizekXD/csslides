@@ -22,11 +22,11 @@ export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
-}>) {
+}>) {  
   return (
     <html suppressHydrationWarning lang="en">
       <body
-        className={`${inter.className} ${jetbrainsMono.variable} antialiased`}
+        className={`${inter.variable} ${jetbrainsMono.variable} antialiased font-sans`}
       >
         <ThemeProvider
             attribute="class"

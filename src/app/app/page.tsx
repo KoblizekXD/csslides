@@ -1,3 +1,4 @@
+import { Editor } from "@/components/editor";
 import { SlidePreview, SlidePreviewBar } from "@/components/slide-preview";
 import {
   Menubar,
@@ -8,8 +9,6 @@ import {
   MenubarShortcut,
   MenubarTrigger,
 } from "@/components/ui/menubar";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { ArrowLeftToLine, Presentation } from "lucide-react";
 
 export default function Page() {
   return (
@@ -34,7 +33,9 @@ export default function Page() {
           <SlidePreview name="Slide 1" />
         </SlidePreviewBar>
         <div className="flex-1">
-          <div className="h-full w-full rounded border"></div>
+          <div className="h-full w-full rounded border">
+            <Editor />
+          </div>
         </div>
       </div>
     </main>
