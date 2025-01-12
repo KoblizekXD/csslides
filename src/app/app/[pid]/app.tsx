@@ -29,7 +29,9 @@ export default function App({ id }: { id: string }) {
   const [presentation, setPresentation] = useState<
     PresentationInformation | undefined
   >(undefined);
-  const [html, setHtml] = useState("");
+  const [currentSlide, setCurrentSlide] = useState<Slide | undefined>(
+    undefined
+  );
 
   useEffect(() => {
     setPresentation(getById(id));
@@ -38,8 +40,19 @@ export default function App({ id }: { id: string }) {
   useEffect(() => {
     if (!presentation) return;
     replaceProject(presentation);
-    setHtml(presentation.html);
+    setCurrentSlide(presentation.slides[0]);
   }, [presentation]);
+
+  useEffect(() => {
+    if (!currentSlide) return;
+    setPresentation((prev) => {
+      if (!prev) return prev;
+      const index = prev.slides.findIndex((slide) => slide.name === currentSlide.name);
+      if (index === -1) return prev;
+      prev.slides[index] = currentSlide;
+      return prev;
+    });
+  }, [currentSlide]);
 
   return (
     <main className="flex p-1 gap-y-1 flex-col h-screen bg-background">
@@ -82,14 +95,11 @@ export default function App({ id }: { id: string }) {
             </TabsList>
             <TabsContent value="html">
               <Editor
-                defaultValue={html}
+                defaultValue={currentSlide?.html}
                 onChange={(text) => {
-                  setPresentation((prev) => {
+                  setCurrentSlide((prev) => {
                     if (!prev) return prev;
-                    return {
-                      ...prev,
-                      html: text,
-                    };
+                    return { ...prev, html: text };
                   });
                 }}
               />
@@ -109,7 +119,7 @@ export default function App({ id }: { id: string }) {
             </div>
             <div className="flex-1 flex items-center justify-center">
               <AspectRatio
-                dangerouslySetInnerHTML={{ __html: html }}
+                dangerouslySetInnerHTML={{ __html: currentSlide?.html || "" }}
                 ratio={16 / 9}
                 className="border rounded"
               ></AspectRatio>

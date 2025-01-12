@@ -21,6 +21,11 @@ export interface PresentationInformation {
   description?: string;
   lastEdited: string;
   path?: string;
+  slides: Slide[];
+}
+
+export interface Slide {
+  name: string;
   html: string;
   styles: string;
 }
@@ -73,8 +78,7 @@ export function RecentPage() {
                   description: formData.get("description") as string,
                   lastEdited: new Date().toISOString(),
                   path: randomId(),
-                  html: "",
-                  styles: "",
+                  slides: [],
                 });
               }} className="flex flex-col gap-y-2">
                 <Input name="title" required placeholder="Title" />
