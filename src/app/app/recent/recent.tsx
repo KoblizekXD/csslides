@@ -12,10 +12,14 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { getProjects, saveProject } from "@/lib/ls-util";
+import { saveProject } from "@/lib/ls-util";
+import {
+  type PresentationPreview,
+  getPresentations,
+} from "@/lib/supabase/actions";
 import { randomId } from "@/lib/utils";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export interface PresentationInformation {
   title: string;
@@ -31,21 +35,20 @@ export interface Slide {
   styles: string;
 }
 
-export function Card({
-  title,
-  description,
-  lastEdited,
-  path,
-}: PresentationInformation) {
+export function Card(preview: PresentationPreview) {
   const router = useRouter();
   return (
     <div className="flex flex-col gap-y-2 bg-background border p-4 rounded shadow-md">
-      <h2 className="text-lg font-bold">{title}</h2>
-      <p className="text-sm text-gray-500">{description}</p>
-      <p className="text-sm text-gray-500">Last edited: {lastEdited}</p>
+      <h2 className="text-lg font-bold">{preview.name}</h2>
+      <p className="text-sm text-gray-500">
+        {preview.description || "No description provided."}
+      </p>
+      <p className="text-sm text-gray-500">
+        Last edited: {new Date(preview.created_at).toUTCString()}
+      </p>
       <div className="flex gap-x-2">
         <Button
-          onClick={() => router.push(`/app/${path}`)}
+          onClick={() => router.push(`/app/${preview.path_id}`)}
           className="flex justify-center"
         >
           Open
@@ -57,9 +60,17 @@ export function Card({
 }
 
 export function RecentPage() {
+  const [previews, setPreviews] = useState<PresentationPreview[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // <-- or here?
+    getPresentations().then((data) => {
+      if (typeof data === "string") {
+        setError(data);
+        return;
+      }
+      setPreviews(data);
+    });
   }, []);
 
   return (
@@ -104,9 +115,10 @@ export function RecentPage() {
             </DialogContent>
           </Dialog>
         </div>
+        {error && <p className="text-red-500">{error}</p>}
         <div className="grid grid-cols-3 gap-4">
-          {getProjects().map((project) => (
-            <Card key={project.path} {...project} />
+          {previews.map((preview) => (
+            <Card key={preview.path_id} {...preview} />
           ))}
         </div>
       </div>

@@ -62,10 +62,12 @@ export interface Presentation {
   created_at: string;
   user_id: string;
   path_id: string;
+  name: string;
+  description: string;
   slides: Slide[];
 }
 
-type PresentationPreview = Omit<Presentation, "slides">;
+export type PresentationPreview = Omit<Presentation, "slides">;
 
 export async function createPresentation(
   presentation: Presentation
@@ -101,7 +103,7 @@ export async function getPresentations(): Promise<PresentationPreview[] | string
   const supabase = await createClient();
 
   const { data, error } = await supabase.from("presentations")
-    .select("id, created_at, user_id, path_id").eq("user_id", (await supabase.auth.getUser())?.data.user?.id);
+    .select("id, created_at, user_id, path_id, name, description").eq("user_id", (await supabase.auth.getUser())?.data.user?.id);
 
   if (error) {
     return error.message;
