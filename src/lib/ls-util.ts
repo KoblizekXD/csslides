@@ -1,4 +1,4 @@
-import { PresentationInformation } from "@/app/app/recent/recent";
+import type { PresentationInformation } from "@/app/app/recent/recent";
 
 export function saveProject(info: PresentationInformation) {
   const array = JSON.parse(localStorage.getItem("presentations") || "[]") as PresentationInformation[];

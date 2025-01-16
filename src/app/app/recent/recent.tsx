@@ -15,6 +15,7 @@ import {
 import { getProjects, saveProject } from "@/lib/ls-util";
 import { randomId } from "@/lib/utils";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export interface PresentationInformation {
   title: string;
@@ -34,7 +35,7 @@ export function Card({
   title,
   description,
   lastEdited,
-  path
+  path,
 }: PresentationInformation) {
   const router = useRouter();
   return (
@@ -43,7 +44,12 @@ export function Card({
       <p className="text-sm text-gray-500">{description}</p>
       <p className="text-sm text-gray-500">Last edited: {lastEdited}</p>
       <div className="flex gap-x-2">
-        <Button onClick={() => router.push(`/app/${path}`)} className="flex justify-center">Open</Button>
+        <Button
+          onClick={() => router.push(`/app/${path}`)}
+          className="flex justify-center"
+        >
+          Open
+        </Button>
         <Button className="flex justify-center">Share</Button>
       </div>
     </div>
@@ -51,6 +57,11 @@ export function Card({
 }
 
 export function RecentPage() {
+
+  useEffect(() => {
+    // <-- or here?
+  }, []);
+
   return (
     <main className="min-h-screen p-20 flex flex-col gap-y-4 bg-background">
       <h1 className="text-3xl font-bold">Recent presentations</h1>
@@ -71,19 +82,24 @@ export function RecentPage() {
                   scratch. You're the boss!
                 </DialogDescription>
               </DialogHeader>
-              <form onSubmit={fd => {
-                const formData = new FormData(fd.currentTarget);
-                saveProject({
-                  title: formData.get("title") as string,
-                  description: formData.get("description") as string,
-                  lastEdited: new Date().toISOString(),
-                  path: randomId(),
-                  slides: [],
-                });
-              }} className="flex flex-col gap-y-2">
+              <form
+                onSubmit={(fd) => {
+                  const formData = new FormData(fd.currentTarget);
+                  saveProject({
+                    title: formData.get("title") as string,
+                    description: formData.get("description") as string,
+                    lastEdited: new Date().toISOString(),
+                    path: randomId(),
+                    slides: [],
+                  });
+                }}
+                className="flex flex-col gap-y-2"
+              >
                 <Input name="title" required placeholder="Title" />
                 <Input name="description" placeholder="Description" />
-                <Button type="submit" className="w-1/6">Create</Button>
+                <Button type="submit" className="w-1/6">
+                  Create
+                </Button>
               </form>
             </DialogContent>
           </Dialog>

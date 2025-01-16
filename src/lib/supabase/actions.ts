@@ -13,7 +13,7 @@ export async function login(formData: { email: string; password: string }) {
   };
 
   const { error } = await supabase.auth.signInWithPassword(data);
-  
+
   if (error) {
     return error.message;
   }
@@ -22,7 +22,11 @@ export async function login(formData: { email: string; password: string }) {
   redirect("/app");
 }
 
-export async function signup(formData: { username: string; email: string; password: string }) {
+export async function signup(formData: {
+  username: string;
+  email: string;
+  password: string;
+}) {
   const supabase = await createClient();
 
   const data = {
@@ -31,12 +35,11 @@ export async function signup(formData: { username: string; email: string; passwo
     options: {
       data: {
         username: formData.username as string,
-      }
-    }
+      },
+    },
   };
 
   const resp = await supabase.auth.signUp(data);
-  
 
   if (resp.error) {
     return resp.error.message;
@@ -44,4 +47,65 @@ export async function signup(formData: { username: string; email: string; passwo
 
   revalidatePath("/", "layout");
   redirect("/app");
+}
+
+export interface Slide {
+  id: number;
+  created_at: string;
+  html: string;
+  css: string;
+  name: string;
+}
+
+export interface Presentation {
+  id: number;
+  created_at: string;
+  user_id: string;
+  path_id: string;
+  slides: Slide[];
+}
+
+type PresentationPreview = Omit<Presentation, "slides">;
+
+export async function createPresentation(
+  presentation: Presentation
+): Promise<string | undefined> {
+  const supabase = await createClient();
+
+  console.log(
+    "Creating presentation with",
+    presentation.slides.length,
+    "default slides"
+  );
+
+  let res = await supabase.from("presentations").insert(presentation).select();
+
+  if (res.error) {
+    return res.error.message;
+  }
+
+  console.log("Created presentation with id", res.data[0].path_id);
+
+  res = await supabase.from("slides").insert(presentation.slides).select();
+
+  if (res.error) {
+    return res.error.message;
+  }
+
+  console.log("Added", res.data.length, "slides");
+
+  revalidatePath("/app", "layout");
+}
+
+export async function getPresentations(): Promise<PresentationPreview[] | string> {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase.from("presentations")
+    .select("id, created_at, user_id, path_id").eq("user_id", (await supabase.auth.getUser())?.data.user?.id);
+
+  if (error) {
+    return error.message;
+  }
+
+  return data;
 }
