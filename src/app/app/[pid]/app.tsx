@@ -14,31 +14,39 @@ import {
   MenubarTrigger,
 } from "@/components/ui/menubar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type { Presentation, Slide } from "@/lib/supabase/actions";
-import { Play } from "lucide-react";
-import { useState } from "react";
+import { useToast } from "@/hooks/use-toast";
+import type { Presentation } from "@/lib/supabase/actions";
+import { Check, Play } from "lucide-react";
+import { useEffect, useState, useTransition } from "react";
 
 export default function App({
   presentation: defaultPresentation,
 }: {
   presentation: Presentation;
 }) {
+  const { toast } = useToast();
+  const [isPending, startTransition] = useTransition();
   const [presentation, setPresentation] = useState(defaultPresentation);
-  const [currentSlide, setCurrentSlide] = useState<Slide | undefined>(
-    defaultPresentation.slides[0]
-  );
+  const [currentSlide, setCurrentSlide] = useState<number | undefined>(0);
 
-  function saveCurrentSlide() {
-    setPresentation((prev) => {
-      if (currentSlide === undefined) return prev;
-      return {
-        ...prev,
-        slides: prev.slides.map((slide) =>
-          slide.id === currentSlide.id ? currentSlide : slide
-        ),
-      };
-    });
-  }
+  // biome-ignore lint/correctness/useExhaustiveDependencies: Runs initially, no need to run when toast changes
+  useEffect(() => {
+    const onKeydown = (e: KeyboardEvent) => {
+      if (e.key === "s" && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
+        toast({
+          title: "Success! 🎉",
+          description: "I have saved your presentation!"
+        });
+      }
+    };
+
+    window.addEventListener("keydown", onKeydown);
+
+    return () => {
+      window.removeEventListener("keydown", onKeydown);
+    };
+  }, []);
 
   return (
     <main className="flex p-1 gap-y-1 flex-col h-screen bg-background">
@@ -73,7 +81,7 @@ export default function App({
         <SlidePreviewBar>
           {presentation.slides.map((slide, i) => (
             <SlidePreview
-              selected={currentSlide?.id === slide.id}
+              selected={currentSlide === i}
               name={slide.name}
               key={slide.id}
             />
@@ -87,12 +95,20 @@ export default function App({
             </TabsList>
             <TabsContent value="html">
               <Editor
-                defaultValue={currentSlide?.html}
+                defaultValue={
+                  currentSlide !== undefined
+                    ? presentation.slides[currentSlide].html
+                    : ""
+                }
                 onChange={(text) => {
                   if (currentSlide !== undefined) {
-                    setCurrentSlide((prev) => {
-                      if (prev === undefined) return prev;
-                      return { ...prev, html: text };
+                    setPresentation((prev) => {
+                      const slides = [...prev.slides];
+                      slides[currentSlide] = {
+                        ...slides[currentSlide],
+                        html: text,
+                      };
+                      return { ...prev, slides };
                     });
                   }
                 }}
@@ -114,7 +130,12 @@ export default function App({
             <div className="flex-1 flex items-center justify-center">
               <AspectRatio
                 // biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation>
-                dangerouslySetInnerHTML={{ __html: currentSlide?.html || "" }}
+                dangerouslySetInnerHTML={{
+                  __html:
+                    currentSlide !== undefined
+                      ? presentation.slides[currentSlide].html
+                      : "",
+                }}
                 ratio={16 / 9}
                 className="border rounded"
               />
