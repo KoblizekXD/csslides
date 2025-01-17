@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { randomId } from "../utils";
 import { createClient } from "./server";
 
 export async function login(formData: { email: string; password: string }) {
@@ -69,45 +70,51 @@ export interface Presentation {
 
 export type PresentationPreview = Omit<Presentation, "slides">;
 
-export async function createPresentation(
-  presentation: Presentation
-): Promise<string | undefined> {
+export async function getPresentations(): Promise<
+  PresentationPreview[] | string
+> {
   const supabase = await createClient();
 
-  console.log(
-    "Creating presentation with",
-    presentation.slides.length,
-    "default slides"
-  );
-
-  let res = await supabase.from("presentations").insert(presentation).select();
-
-  if (res.error) {
-    return res.error.message;
-  }
-
-  console.log("Created presentation with id", res.data[0].path_id);
-
-  res = await supabase.from("slides").insert(presentation.slides).select();
-
-  if (res.error) {
-    return res.error.message;
-  }
-
-  console.log("Added", res.data.length, "slides");
-
-  revalidatePath("/app", "layout");
-}
-
-export async function getPresentations(): Promise<PresentationPreview[] | string> {
-  const supabase = await createClient();
-
-  const { data, error } = await supabase.from("presentations")
-    .select("id, created_at, user_id, path_id, name, description").eq("user_id", (await supabase.auth.getUser())?.data.user?.id);
+  const { data, error } = await supabase
+    .from("presentations")
+    .select("id, created_at, user_id, path_id, name, description")
+    .eq("user_id", (await supabase.auth.getUser())?.data.user?.id);
 
   if (error) {
     return error.message;
   }
 
   return data;
+}
+
+export async function createPresentation(
+  name: string,
+  description: string
+): Promise<string | undefined> {
+  const supabase = await createClient();
+  const user = await supabase.auth.getUser();
+
+  if (!user) {
+    return "Not authenticated";
+  }
+  if (user.error) {
+    return user.error.message;
+  }
+
+  const path = randomId();
+
+  const presentation = {
+    user_id: user.data.user.id,
+    path_id: path,
+    name,
+    description,
+  } satisfies Omit<Presentation, "id" | "created_at" | "slides">;
+
+  const { error } = await supabase.from("presentations").insert(presentation);
+
+  if (error) {
+    return error.message;
+  }
+
+  revalidatePath(`/app/${path}`, "layout");
 }

@@ -6,18 +6,18 @@ import { Plus } from "lucide-react";
 
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { saveProject } from "@/lib/ls-util";
 import {
   type PresentationPreview,
+  createPresentation,
   getPresentations,
 } from "@/lib/supabase/actions";
-import { randomId } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -95,22 +95,26 @@ export function RecentPage() {
               </DialogHeader>
               <form
                 onSubmit={(fd) => {
+                  fd.preventDefault();
                   const formData = new FormData(fd.currentTarget);
-                  saveProject({
-                    title: formData.get("title") as string,
-                    description: formData.get("description") as string,
-                    lastEdited: new Date().toISOString(),
-                    path: randomId(),
-                    slides: [],
+                  createPresentation(
+                    formData.get("title") as string,
+                    formData.get("description") as string
+                  ).then((data) => {
+                    if (data) {
+                      setError(data);
+                    }
                   });
                 }}
                 className="flex flex-col gap-y-2"
               >
                 <Input name="title" required placeholder="Title" />
                 <Input name="description" placeholder="Description" />
-                <Button type="submit" className="w-1/6">
-                  Create
-                </Button>
+                <DialogClose asChild>
+                  <Button type="submit" className="w-1/6">
+                    Create
+                  </Button>
+                </DialogClose>
               </form>
             </DialogContent>
           </Dialog>
