@@ -15,9 +15,9 @@ import {
 } from "@/components/ui/menubar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
-import type { Presentation } from "@/lib/supabase/actions";
-import { Check, Play } from "lucide-react";
-import { useEffect, useState, useTransition } from "react";
+import { type Presentation, savePresentation } from "@/lib/supabase/actions";
+import { Play } from "lucide-react";
+import { useEffect, useState } from "react";
 
 export default function App({
   presentation: defaultPresentation,
@@ -25,18 +25,25 @@ export default function App({
   presentation: Presentation;
 }) {
   const { toast } = useToast();
-  const [isPending, startTransition] = useTransition();
   const [presentation, setPresentation] = useState(defaultPresentation);
   const [currentSlide, setCurrentSlide] = useState<number | undefined>(0);
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: Runs initially, no need to run when toast changes
   useEffect(() => {
     const onKeydown = (e: KeyboardEvent) => {
       if (e.key === "s" && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
-        toast({
-          title: "Success! 🎉",
-          description: "I have saved your presentation!"
+        savePresentation(presentation).then((res) => {
+          if (res) {
+            toast({
+              title: "Error! 😢",
+              description: res,
+            });
+          } else {
+            toast({
+              title: "Success! 🎉",
+              description: "I have saved your presentation!",
+            });
+          }
         });
       }
     };
@@ -46,7 +53,7 @@ export default function App({
     return () => {
       window.removeEventListener("keydown", onKeydown);
     };
-  }, []);
+  }, [presentation, toast]);
 
   return (
     <main className="flex p-1 gap-y-1 flex-col h-screen bg-background">

@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { randomId } from "../utils";
+import { randomId, removeAttrFromObject } from "../utils";
 import { createClient } from "./server";
 
 export async function login(formData: { email: string; password: string }) {
@@ -159,13 +159,39 @@ export async function getPresentation(
   return res;
 }
 
-export async function createSlide(name: string, presentation: Presentation): Promise<Slide | undefined> {
+export async function createSlide(
+  name: string,
+  presentation: Presentation
+): Promise<Slide | undefined> {
   const supabase = await createClient();
 
-  return await supabase.from("slides").insert({
-    html: "",
-    css: "",
-    name,
-    presentation: presentation.id,
-  }).select().single().then((res) => res.data as Slide);
+  return await supabase
+    .from("slides")
+    .insert({
+      html: "",
+      css: "",
+      name,
+      presentation: presentation.id,
+    })
+    .select()
+    .single()
+    .then((res) => res.data as Slide);
+}
+
+export async function savePresentation(presentation: Presentation) {
+  const supabase = await createClient();
+
+  let res = await supabase.from("slides").upsert(presentation.slides);
+
+  if (res.error) {
+    return res.error.message;
+  }
+
+  res = await supabase
+    .from("presentations")
+    .upsert(removeAttrFromObject(presentation, "slides"));
+
+  if (res.error) {
+    return res.error.message;
+  }
 }
