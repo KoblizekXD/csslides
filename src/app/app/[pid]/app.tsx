@@ -14,45 +14,31 @@ import {
   MenubarTrigger,
 } from "@/components/ui/menubar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { getById, replaceProject } from "@/lib/ls-util";
+import type { Presentation, Slide } from "@/lib/supabase/actions";
 import { Play } from "lucide-react";
-import { useEffect, useState } from "react";
-import { PresentationInformation } from "../recent/recent";
+import { useState } from "react";
 
-export interface Slide {
-  name: string;
-  html: string;
-  styles: string;
-}
-
-export default function App({ id }: { id: string }) {
-  const [presentation, setPresentation] = useState<
-    PresentationInformation | undefined
-  >(undefined);
+export default function App({
+  presentation: defaultPresentation,
+}: {
+  presentation: Presentation;
+}) {
+  const [presentation, setPresentation] = useState(defaultPresentation);
   const [currentSlide, setCurrentSlide] = useState<Slide | undefined>(
-    undefined
+    defaultPresentation.slides[0]
   );
 
-  useEffect(() => {
-    setPresentation(getById(id));
-  }, []);
-
-  useEffect(() => {
-    if (!presentation) return;
-    replaceProject(presentation);
-    setCurrentSlide(presentation.slides[0]);
-  }, [presentation]);
-
-  useEffect(() => {
-    if (!currentSlide) return;
+  function saveCurrentSlide() {
     setPresentation((prev) => {
-      if (!prev) return prev;
-      const index = prev.slides.findIndex((slide) => slide.name === currentSlide.name);
-      if (index === -1) return prev;
-      prev.slides[index] = currentSlide;
-      return prev;
+      if (currentSlide === undefined) return prev;
+      return {
+        ...prev,
+        slides: prev.slides.map((slide) =>
+          slide.id === currentSlide.id ? currentSlide : slide
+        ),
+      };
     });
-  }, [currentSlide]);
+  }
 
   return (
     <main className="flex p-1 gap-y-1 flex-col h-screen bg-background">
@@ -85,7 +71,13 @@ export default function App({ id }: { id: string }) {
       </Menubar>
       <div className="flex-1 max-h-full flex gap-x-1">
         <SlidePreviewBar>
-          <SlidePreview name="Slide 1" />
+          {presentation.slides.map((slide, i) => (
+            <SlidePreview
+              selected={currentSlide?.id === slide.id}
+              name={slide.name}
+              key={slide.id}
+            />
+          ))}
         </SlidePreviewBar>
         <div className="h-full flex-1 flex w-full rounded border p-2">
           <Tabs defaultValue="html" className="w-1/2 h-full">
@@ -97,10 +89,12 @@ export default function App({ id }: { id: string }) {
               <Editor
                 defaultValue={currentSlide?.html}
                 onChange={(text) => {
-                  setCurrentSlide((prev) => {
-                    if (!prev) return prev;
-                    return { ...prev, html: text };
-                  });
+                  if (currentSlide !== undefined) {
+                    setCurrentSlide((prev) => {
+                      if (prev === undefined) return prev;
+                      return { ...prev, html: text };
+                    });
+                  }
                 }}
               />
             </TabsContent>
@@ -119,10 +113,11 @@ export default function App({ id }: { id: string }) {
             </div>
             <div className="flex-1 flex items-center justify-center">
               <AspectRatio
+                // biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation>
                 dangerouslySetInnerHTML={{ __html: currentSlide?.html || "" }}
                 ratio={16 / 9}
                 className="border rounded"
-              ></AspectRatio>
+              />
             </div>
           </div>
         </div>

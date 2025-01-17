@@ -56,6 +56,7 @@ export interface Slide {
   html: string;
   css: string;
   name: string;
+  presentation: string;
 }
 
 export interface Presentation {
@@ -117,4 +118,54 @@ export async function createPresentation(
   }
 
   revalidatePath(`/app/${path}`, "layout");
+}
+
+export async function getPresentation(
+  pathId: string
+): Promise<string | Presentation> {
+  const supabase = await createClient();
+  const user = await supabase.auth.getUser();
+
+  if (!user) {
+    return "Not authenticated";
+  }
+  if (user.error) {
+    return user.error.message;
+  }
+
+  const result = await supabase
+    .from("presentations")
+    .select("*")
+    .eq("path_id", pathId)
+    .single();
+
+  if (result.error) {
+    return result.error.message;
+  }
+
+  const res = result.data as Presentation;
+
+  const slides = await supabase
+    .from("slides")
+    .select("*")
+    .eq("presentation", res.id);
+
+  if (slides.error) {
+    return slides.error.message;
+  }
+
+  res.slides = slides.data as Slide[];
+
+  return res;
+}
+
+export async function createSlide(name: string, presentation: Presentation): Promise<Slide | undefined> {
+  const supabase = await createClient();
+
+  return await supabase.from("slides").insert({
+    html: "",
+    css: "",
+    name,
+    presentation: presentation.id,
+  }).select().single().then((res) => res.data as Slide);
 }

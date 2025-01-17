@@ -1,6 +1,7 @@
 "use client";
 
 import { ArrowLeftToLine } from "lucide-react";
+import { type MouseEventHandler, useEffect, useState } from "react";
 import { AspectRatio } from "./ui/aspect-ratio";
 import { Skeleton } from "./ui/skeleton";
 import {
@@ -9,15 +10,24 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "./ui/tooltip";
-import { useEffect, useState } from "react";
 
 interface SlidePreviewProps {
   name: string;
+  onSelected?: MouseEventHandler;
+  selected?: boolean;
 }
 
-export const SlidePreview = ({ name }: SlidePreviewProps) => {
+export const SlidePreview = ({
+  name,
+  onSelected,
+  selected = false,
+}: SlidePreviewProps) => {
   return (
-    <div className="rounded cursor-pointer hover:bg-muted transition-colors duration-200 p-1 select-none">
+    // biome-ignore lint/a11y/useKeyWithClickEvents: <explanation>
+<div
+      onClick={onSelected}
+      className={`rounded cursor-pointer hover:bg-muted transition-colors duration-200 p-1 select-none ${selected && "bg-muted"}`}
+    >
       <AspectRatio ratio={16 / 9}>
         <Skeleton className="w-full h-full" />
       </AspectRatio>
@@ -45,13 +55,16 @@ export const SlidePreviewBar = ({
   }, [hidden]);
 
   return (
-    <div style={{
-      width: hidden ? "0" : "default",
-      display: removed ? "none" : "default",
-    }} className="flex p-1 transition-all duration-200 flex-col w-44 rounded border overflow-y-scroll">
+    <div
+      style={{
+        width: hidden ? "0" : "default",
+        display: removed ? "none" : "default",
+      }}
+      className="flex p-1 transition-all duration-200 flex-col w-44 rounded border overflow-y-scroll"
+    >
       <div className="flex items-center gap-x-1 p-1">
         <span className="font-bold text-sm">Slides</span>
-        <span className="ml-auto" onClick={() => setHidden(!hidden)}>
+        <span className="ml-auto" onKeyDown={() => setHidden(!hidden)}>
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger>
