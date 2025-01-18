@@ -1,6 +1,5 @@
 "use client";
 
-import { Editor } from "@/components/editor";
 import { SlidePreview, SlidePreviewBar } from "@/components/slide-preview";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Button } from "@/components/ui/button";
@@ -16,6 +15,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { type Presentation, savePresentation } from "@/lib/supabase/actions";
+import Editor from "@monaco-editor/react";
 import { Play } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -26,7 +26,9 @@ export default function App({
 }) {
   const { toast } = useToast();
   const [presentation, setPresentation] = useState(defaultPresentation);
-  const [currentSlide, setCurrentSlide] = useState<number | undefined>(0);
+  const [currentSlide, setCurrentSlide] = useState<number | undefined>(
+    defaultPresentation.slides.length ? 0 : undefined
+  );
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
@@ -67,7 +69,9 @@ export default function App({
             </MenubarItem>
             <MenubarItem>New Slide</MenubarItem>
             <MenubarSeparator />
-            <MenubarItem>Save <MenubarShortcut>⌘S</MenubarShortcut></MenubarItem>
+            <MenubarItem>
+              Save <MenubarShortcut>⌘S</MenubarShortcut>
+            </MenubarItem>
             <MenubarSeparator />
             <MenubarItem>Share</MenubarItem>
             <MenubarSeparator />
@@ -95,13 +99,25 @@ export default function App({
           ))}
         </SlidePreviewBar>
         <div className="h-full flex-1 flex w-full rounded border p-2">
-          <Tabs defaultValue="html" className="w-1/2 overflow-y-auto flex flex-col h-full">
+          <Tabs
+            defaultValue="html"
+            className="w-1/2 overflow-y-auto flex flex-col h-full"
+          >
             <TabsList className="self-start">
               <TabsTrigger value="html">HTML</TabsTrigger>
               <TabsTrigger value="styles">Styles</TabsTrigger>
             </TabsList>
             <TabsContent className="flex-1" value="html">
               <Editor
+                options={{
+                  fontFamily: "JetBrains Mono",
+                  autoClosingBrackets: "always",
+                  minimap: { enabled: false },
+                  fontSize: 14,
+                  mouseWheelZoom: true,
+                }}
+                theme="vs-dark"
+                defaultLanguage="html"
                 defaultValue={
                   currentSlide !== undefined
                     ? presentation.slides[currentSlide].html
@@ -113,7 +129,7 @@ export default function App({
                       const slides = [...prev.slides];
                       slides[currentSlide] = {
                         ...slides[currentSlide],
-                        html: text,
+                        html: text || "",
                       };
                       return { ...prev, slides };
                     });
@@ -122,7 +138,34 @@ export default function App({
               />
             </TabsContent>
             <TabsContent value="styles">
-              <Editor />
+              <Editor
+                options={{
+                  fontFamily: "JetBrains Mono",
+                  autoClosingBrackets: "always",
+                  minimap: { enabled: false },
+                  fontSize: 14,
+                  mouseWheelZoom: true,
+                }}
+                theme="vs-dark"
+                defaultLanguage="html"
+                defaultValue={
+                  currentSlide !== undefined
+                    ? presentation.slides[currentSlide].html
+                    : ""
+                }
+                onChange={(text) => {
+                  if (currentSlide !== undefined) {
+                    setPresentation((prev) => {
+                      const slides = [...prev.slides];
+                      slides[currentSlide] = {
+                        ...slides[currentSlide],
+                        html: text || "",
+                      };
+                      return { ...prev, slides };
+                    });
+                  }
+                }}
+              />
             </TabsContent>
           </Tabs>
           <hr className="border-l stroke-muted-foreground h-full" />
