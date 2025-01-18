@@ -11,7 +11,6 @@ export default async function Page({
   const presentation = await getPresentation((await params).pid);
 
   if (typeof presentation === "string") {
-    console.log(presentation);
     redirect("/app/recent");
   } else return <App presentation={presentation} />;
 }

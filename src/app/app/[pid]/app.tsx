@@ -17,6 +17,7 @@ import { useToast } from "@/hooks/use-toast";
 import { type Presentation, savePresentation } from "@/lib/supabase/actions";
 import Editor from "@monaco-editor/react";
 import { Play } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function App({
@@ -25,29 +26,34 @@ export default function App({
   presentation: Presentation;
 }) {
   const { toast } = useToast();
+  const router = useRouter();
   const [presentation, setPresentation] = useState(defaultPresentation);
   const [currentSlide, setCurrentSlide] = useState<number | undefined>(
     defaultPresentation.slides.length ? 0 : undefined
   );
+
+  async function saveCurrent() {
+    savePresentation(presentation).then((res) => {
+      if (res) {
+        toast({
+          title: "Error! 😢",
+          description: res,
+        });
+      } else {
+        toast({
+          title: "Success! 🎉",
+          description: "I have saved your presentation!",
+        });
+      }
+    });
+  }
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     const onKeydown = (e: KeyboardEvent) => {
       if (e.key === "s" && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
-        savePresentation(presentation).then((res) => {
-          if (res) {
-            toast({
-              title: "Error! 😢",
-              description: res,
-            });
-          } else {
-            toast({
-              title: "Success! 🎉",
-              description: "I have saved your presentation!",
-            });
-          }
-        });
+        saveCurrent();
       }
     };
 
@@ -69,13 +75,22 @@ export default function App({
             </MenubarItem>
             <MenubarItem>New Slide</MenubarItem>
             <MenubarSeparator />
-            <MenubarItem onClick={() => savePresentation(presentation)}>
+            <MenubarItem onClick={() => saveCurrent()}>
               Save <MenubarShortcut>⌘S</MenubarShortcut>
             </MenubarItem>
             <MenubarSeparator />
             <MenubarItem>Share</MenubarItem>
             <MenubarSeparator />
-            <MenubarItem className="text-red-400">Exit</MenubarItem>
+            <MenubarItem
+              onClick={() => {
+                saveCurrent().then(() => {
+                  router.push("/app/recent");
+                });
+              }}
+              className="text-red-400"
+            >
+              Exit
+            </MenubarItem>
           </MenubarContent>
         </MenubarMenu>
         <MenubarMenu>
