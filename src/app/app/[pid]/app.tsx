@@ -28,6 +28,7 @@ export default function App({
   const [presentation, setPresentation] = useState(defaultPresentation);
   const [currentSlide, setCurrentSlide] = useState<number | undefined>(0);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     const onKeydown = (e: KeyboardEvent) => {
       if (e.key === "s" && (e.metaKey || e.ctrlKey)) {
@@ -53,7 +54,7 @@ export default function App({
     return () => {
       window.removeEventListener("keydown", onKeydown);
     };
-  }, [presentation, toast]);
+  }, [presentation]);
 
   return (
     <main className="flex p-1 gap-y-1 flex-col h-screen bg-background">
@@ -66,11 +67,10 @@ export default function App({
             </MenubarItem>
             <MenubarItem>New Slide</MenubarItem>
             <MenubarSeparator />
+            <MenubarItem>Save <MenubarShortcut>⌘S</MenubarShortcut></MenubarItem>
+            <MenubarSeparator />
             <MenubarItem>Share</MenubarItem>
             <MenubarSeparator />
-            <MenubarItem>Print</MenubarItem>
-            <MenubarSeparator />
-            <MenubarItem>Close Presentation</MenubarItem>
             <MenubarItem className="text-red-400">Exit</MenubarItem>
           </MenubarContent>
         </MenubarMenu>
@@ -95,12 +95,12 @@ export default function App({
           ))}
         </SlidePreviewBar>
         <div className="h-full flex-1 flex w-full rounded border p-2">
-          <Tabs defaultValue="html" className="w-1/2 h-full">
-            <TabsList>
+          <Tabs defaultValue="html" className="w-1/2 overflow-y-auto flex flex-col h-full">
+            <TabsList className="self-start">
               <TabsTrigger value="html">HTML</TabsTrigger>
               <TabsTrigger value="styles">Styles</TabsTrigger>
             </TabsList>
-            <TabsContent value="html">
+            <TabsContent className="flex-1" value="html">
               <Editor
                 defaultValue={
                   currentSlide !== undefined
