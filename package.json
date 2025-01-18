@@ -9,12 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@codemirror/basic-setup": "^0.20.0",
-    "@codemirror/lang-html": "^6.4.9",
-    "@codemirror/state": "^6.5.1",
-    "@codemirror/view": "^6.36.2",
     "@hookform/resolvers": "^3.10.0",
-    "@lezer/highlight": "^1.2.1",
     "@monaco-editor/react": "^4.6.0",
     "@radix-ui/react-aspect-ratio": "^1.1.1",
     "@radix-ui/react-dialog": "^1.1.4",
@@ -31,7 +26,6 @@
     "@uiw/react-codemirror": "^4.23.7",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "codemirror": "^6.0.1",
     "dompurify": "^3.2.3",
     "lucide-react": "^0.471.0",
     "next": "15.1.4",
