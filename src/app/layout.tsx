@@ -17,6 +17,7 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   title: "CSS Slides",
   description: "Create powerful presentations with HTML and CSS",
+  icons: "/presentation.ico"
 };
 
 export default function RootLayout({

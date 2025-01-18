@@ -69,7 +69,7 @@ export default function App({
             </MenubarItem>
             <MenubarItem>New Slide</MenubarItem>
             <MenubarSeparator />
-            <MenubarItem>
+            <MenubarItem onClick={() => savePresentation(presentation)}>
               Save <MenubarShortcut>⌘S</MenubarShortcut>
             </MenubarItem>
             <MenubarSeparator />
