@@ -67,6 +67,7 @@ export const SlidePreviewBar = ({
   onOpenChange?: (open: boolean) => void;
   createSlide?: (name: string) => void;
 }) => {
+  const [dialogOpen, setDialogOpen] = useState(open);
   const [hidden, setHidden] = useState(false);
   const [removed, setRemoved] = useState(false);
 
@@ -80,8 +81,12 @@ export const SlidePreviewBar = ({
     }
   }, [hidden]);
 
+  useEffect(() => {
+    setDialogOpen(open);
+  }, [open]);
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={dialogOpen} onOpenChange={onOpenChange}>
       <ContextMenu>
         <ContextMenuTrigger asChild>
           <div
@@ -93,7 +98,7 @@ export const SlidePreviewBar = ({
           >
             <div className="flex items-center gap-x-1 p-1">
               <span className="font-bold text-sm">Slides</span>
-              <span className="ml-auto" onKeyDown={() => setHidden(!hidden)}>
+              <span className="ml-auto" onClick={() => setHidden(!hidden)}>
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger>
@@ -133,7 +138,7 @@ export const SlidePreviewBar = ({
             <Button
               formAction={(fd) => {
                 createSlide?.(fd.get("name") as string);
-                setHidden(true);
+                setDialogOpen(false);
               }}
               type="submit"
             >
