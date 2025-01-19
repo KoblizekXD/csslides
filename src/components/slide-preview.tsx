@@ -41,7 +41,6 @@ export const SlidePreview = ({
   selected = false,
 }: SlidePreviewProps) => {
   return (
-    // biome-ignore lint/a11y/useKeyWithClickEvents: <explanation>
     <div
       onClick={onSelected}
       className={`rounded cursor-pointer hover:bg-muted transition-colors duration-200 p-1 select-none ${
