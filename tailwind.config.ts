@@ -68,17 +68,17 @@ export default {
       // Disables Tailwind's purging unused CSS, remove if causes lag?
       pattern: /bg-*/,
     },
-		{
-			pattern: /text-*/,
-		},
-		{
-			pattern: /flex-*/
-		},
-		{
-			pattern: /w-*/
-		},
-		{
-			pattern: /h-*/
-		}
+    {
+      pattern: /text-*/,
+    },
+    {
+      pattern: /flex-*/,
+    },
+    {
+      pattern: /w-*/,
+    },
+    {
+      pattern: /h-*/,
+    },
   ],
 } satisfies Config;

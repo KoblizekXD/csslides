@@ -29,7 +29,7 @@ const formSchema = z.object({
   }),
   username: z.string().min(3, {
     message: "Username must be at least 3 characters.",
-  })
+  }),
 });
 
 export function SignupForm() {
@@ -41,7 +41,7 @@ export function SignupForm() {
     defaultValues: {
       email: "",
       password: "",
-      username: ""
+      username: "",
     },
   });
 
@@ -61,8 +61,7 @@ export function SignupForm() {
       {error && <p className="text-red-500">{error}</p>}
       <form
         className="flex bg-black gap-y-4 flex-col border w-1/5 h-1/2 shadow-xl rounded-xl p-4"
-        onSubmit={form.handleSubmit(onSubmit)}
-      >
+        onSubmit={form.handleSubmit(onSubmit)}>
         <FormField
           control={form.control}
           name="username"
@@ -113,8 +112,7 @@ export function SignupForm() {
           <Button
             type="submit"
             className="flex justify-center w-1/2"
-            disabled={loading}
-          >
+            disabled={loading}>
             {loading && <LoaderCircle className="animate-spin" />}
             Signup
           </Button>
@@ -125,8 +123,7 @@ export function SignupForm() {
             disabled={loading}
             onClick={() => {
               router.push("/login");
-            }}
-          >
+            }}>
             Login instead
           </Button>
         </div>

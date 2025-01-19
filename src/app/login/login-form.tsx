@@ -17,8 +17,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { login } from "@/lib/supabase/actions";
 import { LoaderCircle } from "lucide-react";
-import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 const formSchema = z.object({
   email: z.string().email({
@@ -57,8 +57,7 @@ export function LoginForm() {
       {error && <p className="text-red-500">{error}</p>}
       <form
         className="flex bg-black gap-y-4 flex-col border w-1/5 h-1/2 shadow-xl rounded-xl p-4"
-        onSubmit={form.handleSubmit(onSubmit)}
-      >
+        onSubmit={form.handleSubmit(onSubmit)}>
         <FormField
           control={form.control}
           name="email"
@@ -92,8 +91,7 @@ export function LoginForm() {
           <Button
             type="submit"
             className="flex justify-center w-1/2"
-            disabled={loading}
-          >  
+            disabled={loading}>
             {loading && <LoaderCircle className="animate-spin" />}
             Login
           </Button>
@@ -104,8 +102,7 @@ export function LoginForm() {
             disabled={loading}
             onClick={() => {
               router.push("/signup");
-            }}
-          >
+            }}>
             {loading && <LoaderCircle className="animate-spin" />}
             Sign-up instead
           </Button>

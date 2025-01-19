@@ -49,8 +49,7 @@ export function Card(preview: PresentationPreview) {
       <div className="flex gap-x-2">
         <Button
           onClick={() => router.push(`/app/${preview.path_id}`)}
-          className="flex justify-center"
-        >
+          className="flex justify-center">
           Open
         </Button>
         <Button className="flex justify-center">Share</Button>
@@ -99,15 +98,14 @@ export function RecentPage() {
                   const formData = new FormData(fd.currentTarget);
                   createPresentation(
                     formData.get("title") as string,
-                    formData.get("description") as string
+                    formData.get("description") as string,
                   ).then((data) => {
                     if (data) {
                       setError(data);
                     }
                   });
                 }}
-                className="flex flex-col gap-y-2"
-              >
+                className="flex flex-col gap-y-2">
                 <Input name="title" required placeholder="Title" />
                 <Input name="description" placeholder="Description" />
                 <DialogClose asChild>

@@ -1,13 +1,17 @@
 import type { PresentationInformation } from "@/app/app/recent/recent";
 
 export function saveProject(info: PresentationInformation) {
-  const array = JSON.parse(localStorage.getItem("presentations") || "[]") as PresentationInformation[];
+  const array = JSON.parse(
+    localStorage.getItem("presentations") || "[]",
+  ) as PresentationInformation[];
   array.push(info);
   localStorage.setItem("presentations", JSON.stringify(array));
 }
 
 export function getProjects() {
-  return JSON.parse(localStorage.getItem("presentations") || "[]") as PresentationInformation[];
+  return JSON.parse(
+    localStorage.getItem("presentations") || "[]",
+  ) as PresentationInformation[];
 }
 
 export function getById(id: string) {

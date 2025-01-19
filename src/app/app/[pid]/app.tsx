@@ -33,7 +33,7 @@ export default function App({
   const router = useRouter();
   const [presentation, setPresentation] = useState(defaultPresentation);
   const [currentSlide, setCurrentSlide] = useState<number | undefined>(
-    defaultPresentation.slides.length ? 0 : undefined
+    defaultPresentation.slides.length ? 0 : undefined,
   );
 
   async function saveCurrent() {
@@ -109,8 +109,7 @@ export default function App({
                   router.push("/app/recent");
                 });
               }}
-              className="text-red-400"
-            >
+              className="text-red-400">
               Exit
             </MenubarItem>
           </MenubarContent>
@@ -141,8 +140,7 @@ export default function App({
         <div className="h-full flex-1 flex w-full rounded border p-2">
           <Tabs
             defaultValue="html"
-            className="w-1/2 overflow-y-auto flex flex-col h-full"
-          >
+            className="w-1/2 overflow-y-auto flex flex-col h-full">
             <TabsList className="self-start">
               <TabsTrigger value="html">HTML</TabsTrigger>
               <TabsTrigger value="styles">Styles</TabsTrigger>

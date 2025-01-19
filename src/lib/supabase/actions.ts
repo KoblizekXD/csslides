@@ -90,7 +90,7 @@ export async function getPresentations(): Promise<
 
 export async function createPresentation(
   name: string,
-  description: string
+  description: string,
 ): Promise<string | undefined> {
   const supabase = await createClient();
   const user = await supabase.auth.getUser();
@@ -121,7 +121,7 @@ export async function createPresentation(
 }
 
 export async function getPresentation(
-  pathId: string
+  pathId: string,
 ): Promise<string | Presentation> {
   const supabase = await createClient();
   const user = await supabase.auth.getUser();
@@ -161,7 +161,7 @@ export async function getPresentation(
 
 export async function createSlide(
   name: string,
-  presentation: Presentation
+  presentation: Presentation,
 ): Promise<Slide | undefined> {
   const supabase = await createClient();
 

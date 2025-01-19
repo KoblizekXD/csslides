@@ -17,28 +17,26 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   title: "CSS Slides",
   description: "Create powerful presentations with HTML and CSS",
-  icons: "/presentation.ico"
+  icons: "/presentation.ico",
 };
 
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
-}>) {  
+}>) {
   return (
     <html suppressHydrationWarning lang="en">
       <body
-        className={`${inter.variable} ${jetbrainsMono.variable} antialiased font-sans`}
-      >
+        className={`${inter.variable} ${jetbrainsMono.variable} antialiased font-sans`}>
         <ThemeProvider
-            attribute="class"
-            defaultTheme="dark"
-            enableSystem
-            disableTransitionOnChange
-          >
-            {children}
-            <Toaster />
-          </ThemeProvider>
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem
+          disableTransitionOnChange>
+          {children}
+          <Toaster />
+        </ThemeProvider>
       </body>
     </html>
   );

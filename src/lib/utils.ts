@@ -12,7 +12,7 @@ export function randomId() {
 // https://stackoverflow.com/a/75605707/13388463
 export const removeAttrFromObject = <O extends object, A extends keyof O>(
   object: O,
-  attr: A
+  attr: A,
 ): Omit<O, A> => {
   const newObject = { ...object };
 
