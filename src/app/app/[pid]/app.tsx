@@ -14,7 +14,11 @@ import {
 } from "@/components/ui/menubar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
-import { type Presentation, savePresentation } from "@/lib/supabase/actions";
+import {
+  type Presentation,
+  createSlide,
+  savePresentation,
+} from "@/lib/supabase/actions";
 import Editor from "@monaco-editor/react";
 import { Play } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -43,6 +47,24 @@ export default function App({
         toast({
           title: "Success! 🎉",
           description: "I have saved your presentation!",
+        });
+      }
+    });
+  }
+
+  async function newSlide(name: string) {
+    createSlide(name, presentation).then((res) => {
+      if (res) {
+        setPresentation((prev) => {
+          return {
+            ...prev,
+            slides: [...prev.slides, res],
+          };
+        });
+      } else {
+        toast({
+          title: "Error! 😢",
+          description: "Failed to create a new slide.",
         });
       }
     });
@@ -104,12 +126,15 @@ export default function App({
         </MenubarMenu>
       </Menubar>
       <div className="flex-1 max-h-full flex gap-x-1">
-        <SlidePreviewBar>
+        <SlidePreviewBar createSlide={newSlide}>
           {presentation.slides.map((slide, i) => (
             <SlidePreview
               selected={currentSlide === i}
               name={slide.name}
               key={slide.id}
+              onSelected={() => {
+                setCurrentSlide(i);
+              }}
             />
           ))}
         </SlidePreviewBar>
@@ -134,6 +159,11 @@ export default function App({
                 theme="vs-dark"
                 defaultLanguage="html"
                 defaultValue={
+                  currentSlide !== undefined
+                    ? presentation.slides[currentSlide].html
+                    : ""
+                }
+                value={
                   currentSlide !== undefined
                     ? presentation.slides[currentSlide].html
                     : ""
