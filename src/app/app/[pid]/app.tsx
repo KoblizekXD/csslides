@@ -20,9 +20,10 @@ import {
   savePresentation,
 } from "@/lib/supabase/actions";
 import Editor from "@monaco-editor/react";
+import html2canvas from "html2canvas";
 import { Play } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export default function App({
   presentation: defaultPresentation,
@@ -33,10 +34,18 @@ export default function App({
   const router = useRouter();
   const [presentation, setPresentation] = useState(defaultPresentation);
   const [currentSlide, setCurrentSlide] = useState<number | undefined>(
-    defaultPresentation.slides.length ? 0 : undefined,
+    defaultPresentation.slides.length ? 0 : undefined
   );
+  const previewRef = useRef<HTMLDivElement>(null);
+  const [preview, setPreview] = useState<HTMLCanvasElement>();
 
   async function saveCurrent() {
+    if (previewRef.current) {
+      html2canvas(previewRef.current).then((canvas) => {
+        setPreview(canvas);
+      });
+    }
+
     savePresentation(presentation).then((res) => {
       if (res) {
         toast({
@@ -70,6 +79,14 @@ export default function App({
     });
   }
 
+  useEffect(() => {
+    if (previewRef.current) {
+      html2canvas(previewRef.current).then((canvas) => {
+        setPreview(canvas);
+      });
+    }
+  }, []);
+
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     const onKeydown = (e: KeyboardEvent) => {
@@ -85,6 +102,16 @@ export default function App({
       window.removeEventListener("keydown", onKeydown);
     };
   }, [presentation]);
+
+  useEffect(() => {
+    if (currentSlide !== undefined) {
+      if (previewRef.current) {
+        html2canvas(previewRef.current).then((canvas) => {
+          setPreview(canvas);
+        });
+      }
+    }
+  }, [currentSlide]);
 
   return (
     <main className="flex p-1 gap-y-1 flex-col h-screen bg-background">
@@ -109,7 +136,8 @@ export default function App({
                   router.push("/app/recent");
                 });
               }}
-              className="text-red-400">
+              className="text-red-400"
+            >
               Exit
             </MenubarItem>
           </MenubarContent>
@@ -131,6 +159,7 @@ export default function App({
               selected={currentSlide === i}
               name={slide.name}
               key={slide.id}
+              preview={currentSlide === i ? preview : undefined}
               onSelected={() => {
                 setCurrentSlide(i);
               }}
@@ -140,7 +169,8 @@ export default function App({
         <div className="h-full flex-1 flex w-full rounded border p-2">
           <Tabs
             defaultValue="html"
-            className="w-1/2 overflow-y-auto flex flex-col h-full">
+            className="w-1/2 overflow-y-auto flex flex-col h-full"
+          >
             <TabsList className="self-start">
               <TabsTrigger value="html">HTML</TabsTrigger>
               <TabsTrigger value="styles">Styles</TabsTrigger>
@@ -230,7 +260,8 @@ export default function App({
                       : "",
                 }}
                 ratio={16 / 9}
-                className="border rounded"
+                className="border bg-black rounded"
+                ref={previewRef}
               />
             </div>
           </div>

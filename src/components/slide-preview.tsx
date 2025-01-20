@@ -33,12 +33,14 @@ interface SlidePreviewProps {
   name: string;
   onSelected?: MouseEventHandler;
   selected?: boolean;
+  preview?: HTMLCanvasElement;
 }
 
 export const SlidePreview = ({
   name,
   onSelected,
   selected = false,
+  preview,
 }: SlidePreviewProps) => {
   return (
     <div
@@ -48,7 +50,8 @@ export const SlidePreview = ({
       }`}
     >
       <AspectRatio ratio={16 / 9}>
-        <Skeleton className="w-full h-full" />
+        {!preview && <Skeleton className="w-full h-full" />}
+        {preview && <img src={preview.toDataURL()} alt="Wow" />}
       </AspectRatio>
       <span className="text-xs text-muted-foreground">{name}</span>
     </div>
@@ -93,7 +96,8 @@ export const SlidePreviewBar = ({
               width: hidden ? "0" : "default",
               display: removed ? "none" : "default",
             }}
-            className="flex p-1 gap-y-1 transition-all duration-200 flex-col w-44 rounded border overflow-y-scroll">
+            className="flex p-1 gap-y-1 transition-all duration-200 flex-col w-44 rounded border overflow-y-scroll"
+          >
             <div className="flex items-center gap-x-1 p-1">
               <span className="font-bold text-sm">Slides</span>
               <span className="ml-auto" onClick={() => setHidden(!hidden)}>
@@ -138,7 +142,8 @@ export const SlidePreviewBar = ({
                 createSlide?.(fd.get("name") as string);
                 setDialogOpen(false);
               }}
-              type="submit">
+              type="submit"
+            >
               Create
             </Button>
           </DialogFooter>
