@@ -1,5 +1,6 @@
 "use client";
 
+import { PreviewScreen } from "@/components/preview-screen";
 import { SlidePreview, SlidePreviewBar } from "@/components/slide-preview";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Button } from "@/components/ui/button";
@@ -33,6 +34,7 @@ export default function App({
   const { toast } = useToast();
   const router = useRouter();
   const [presentation, setPresentation] = useState(defaultPresentation);
+  const [showPreview, setShowPreview] = useState(false);
   const [currentSlide, setCurrentSlide] = useState<number | undefined>(
     defaultPresentation.slides.length ? 0 : undefined
   );
@@ -115,6 +117,7 @@ export default function App({
 
   return (
     <main className="flex p-1 gap-y-1 flex-col h-screen bg-background">
+      {showPreview && <PreviewScreen onClose={() => setShowPreview(false)} presentation={presentation} />}
       <Menubar>
         <MenubarMenu>
           <MenubarTrigger>File</MenubarTrigger>
@@ -245,7 +248,7 @@ export default function App({
           <div className="flex flex-1 px-2 flex-col">
             <div className="flex">
               <h1 className="text-2xl font-extrabold">Preview</h1>
-              <Button className="ml-auto bg-green-600 hover:bg-muted text-white flex justify-center">
+              <Button onClick={() => setShowPreview(true)} className="ml-auto bg-green-600 hover:bg-muted text-white flex justify-center">
                 <Play />
                 Present
               </Button>

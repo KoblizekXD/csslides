@@ -22,3 +22,7 @@ export const removeAttrFromObject = <O extends object, A extends keyof O>(
 
   return newObject;
 };
+
+export function clamp(num: number, min: number, max: number) {
+  return Math.min(Math.max(num, min), max);
+}
