@@ -11,6 +11,9 @@ import {
   MenubarMenu,
   MenubarSeparator,
   MenubarShortcut,
+  MenubarSub,
+  MenubarSubContent,
+  MenubarSubTrigger,
   MenubarTrigger,
 } from "@/components/ui/menubar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -34,11 +37,13 @@ export default function App({
   const { toast } = useToast();
   const router = useRouter();
   const [presentation, setPresentation] = useState(defaultPresentation);
+  const [showSlideList, setShowSlideList] = useState(true);
   const [showPreview, setShowPreview] = useState(false);
   const [currentSlide, setCurrentSlide] = useState<number | undefined>(
     defaultPresentation.slides.length ? 0 : undefined
   );
   const previewRef = useRef<HTMLDivElement>(null);
+  const slidePreviewRef = useRef<{ toggle: () => void }>(null);
   const [preview, setPreview] = useState<HTMLCanvasElement>();
 
   async function saveCurrent() {
@@ -117,7 +122,12 @@ export default function App({
 
   return (
     <main className="flex p-1 gap-y-1 flex-col h-screen bg-background">
-      {showPreview && <PreviewScreen onClose={() => setShowPreview(false)} presentation={presentation} />}
+      {showPreview && (
+        <PreviewScreen
+          onClose={() => setShowPreview(false)}
+          presentation={presentation}
+        />
+      )}
       <Menubar>
         <MenubarMenu>
           <MenubarTrigger>File</MenubarTrigger>
@@ -150,13 +160,31 @@ export default function App({
         </MenubarMenu>
         <MenubarMenu>
           <MenubarTrigger>Layout</MenubarTrigger>
+          <MenubarContent>
+            <MenubarSub>
+              <MenubarSubTrigger>View</MenubarSubTrigger>
+              <MenubarSubContent>
+                <MenubarItem
+                  onClick={() => {
+                    if (slidePreviewRef.current)
+                      slidePreviewRef.current.toggle();
+                  }}
+                >
+                  Slides
+                </MenubarItem>
+              </MenubarSubContent>
+            </MenubarSub>
+          </MenubarContent>
         </MenubarMenu>
         <MenubarMenu>
           <MenubarTrigger>Help</MenubarTrigger>
         </MenubarMenu>
       </Menubar>
       <div className="flex-1 max-h-full flex gap-x-1">
-        <SlidePreviewBar createSlide={newSlide}>
+        <SlidePreviewBar
+          ref={slidePreviewRef}
+          createSlide={newSlide}
+        >
           {presentation.slides.map((slide, i) => (
             <SlidePreview
               selected={currentSlide === i}
@@ -248,7 +276,10 @@ export default function App({
           <div className="flex flex-1 px-2 flex-col">
             <div className="flex">
               <h1 className="text-2xl font-extrabold">Preview</h1>
-              <Button onClick={() => setShowPreview(true)} className="ml-auto bg-green-600 hover:bg-muted text-white flex justify-center">
+              <Button
+                onClick={() => setShowPreview(true)}
+                className="ml-auto bg-green-600 hover:bg-muted text-white flex justify-center"
+              >
                 <Play />
                 Present
               </Button>

@@ -1,7 +1,12 @@
 "use client";
 
 import { ArrowLeftToLine } from "lucide-react";
-import React, { type MouseEventHandler, useEffect, useState } from "react";
+import React, {
+  type MouseEventHandler,
+  useEffect,
+  useImperativeHandle,
+  useState,
+} from "react";
 import { AspectRatio } from "./ui/aspect-ratio";
 import { Skeleton } from "./ui/skeleton";
 import {
@@ -63,25 +68,47 @@ export const SlidePreviewBar = ({
   open,
   onOpenChange,
   createSlide,
+  ref,
 }: {
   children?: React.ReactNode;
   open?: boolean | undefined;
   onOpenChange?: (open: boolean) => void;
   createSlide?: (name: string) => void;
+  ref: React.Ref<{ toggle: () => void }>;
 }) => {
   const [dialogOpen, setDialogOpen] = useState(open);
   const [hidden, setHidden] = useState(false);
   const [removed, setRemoved] = useState(false);
 
   useEffect(() => {
-    if (hidden) {
+    if (!hidden) {
       setTimeout(() => {
-        setRemoved(true);
+        setRemoved(false);
       }, 200);
-    } else {
-      setRemoved(false);
     }
   }, [hidden]);
+
+  useEffect(() => {
+    if (removed) {
+      setTimeout(() => {
+        setHidden(true);
+      }, 200);
+    }
+  }, [removed]);
+
+  useImperativeHandle(
+    ref,
+    () => {
+      return {
+        toggle() {
+          if (!removed)
+            setRemoved(true);
+          else setHidden(false);
+        },
+      };
+    },
+    [removed]
+  );
 
   useEffect(() => {
     setDialogOpen(open);
@@ -93,14 +120,14 @@ export const SlidePreviewBar = ({
         <ContextMenuTrigger asChild>
           <div
             style={{
-              width: hidden ? "0" : "default",
-              display: removed ? "none" : "default",
+              width: removed ? "0" : "11rem",
+              display: hidden ? "none" : "block",
             }}
             className="flex p-1 gap-y-1 transition-all duration-200 flex-col w-44 rounded border overflow-y-scroll"
           >
             <div className="flex items-center gap-x-1 p-1">
               <span className="font-bold text-sm">Slides</span>
-              <span className="ml-auto" onClick={() => setHidden(!hidden)}>
+              <span className="ml-auto" onClick={() => setRemoved(true)}>
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger>
