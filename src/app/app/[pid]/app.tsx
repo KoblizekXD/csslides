@@ -26,6 +26,7 @@ import {
 import Editor from "@monaco-editor/react";
 import html2canvas from "html2canvas";
 import { Play } from "lucide-react";
+import type { editor } from "monaco-editor";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
@@ -37,12 +38,13 @@ export default function App({
   const { toast } = useToast();
   const router = useRouter();
   const [presentation, setPresentation] = useState(defaultPresentation);
-  const [showSlideList, setShowSlideList] = useState(true);
   const [showPreview, setShowPreview] = useState(false);
   const [currentSlide, setCurrentSlide] = useState<number | undefined>(
     defaultPresentation.slides.length ? 0 : undefined
   );
   const previewRef = useRef<HTMLDivElement>(null);
+  const htmlEditorRef = useRef<editor.IStandaloneCodeEditor>(null);
+  const cssEditorRef = useRef<editor.IStandaloneCodeEditor>(null);
   const slidePreviewRef = useRef<{ toggle: () => void }>(null);
   const [preview, setPreview] = useState<HTMLCanvasElement>();
 
@@ -157,6 +159,22 @@ export default function App({
         </MenubarMenu>
         <MenubarMenu>
           <MenubarTrigger>Edit</MenubarTrigger>
+          <MenubarContent>
+            <MenubarItem
+              onClick={() => {
+                htmlEditorRef.current?.trigger("csslides", "undo", null);
+              }}
+            >
+              Undo <MenubarShortcut>⌘Z</MenubarShortcut>
+            </MenubarItem>
+            <MenubarItem
+              onClick={() => {
+                htmlEditorRef.current?.trigger("csslides", "redo", null);
+              }}
+            >
+              Redo <MenubarShortcut>⌘Y</MenubarShortcut>
+            </MenubarItem>
+          </MenubarContent>
         </MenubarMenu>
         <MenubarMenu>
           <MenubarTrigger>Layout</MenubarTrigger>
@@ -181,10 +199,7 @@ export default function App({
         </MenubarMenu>
       </Menubar>
       <div className="flex-1 max-h-full flex gap-x-1">
-        <SlidePreviewBar
-          ref={slidePreviewRef}
-          createSlide={newSlide}
-        >
+        <SlidePreviewBar ref={slidePreviewRef} createSlide={newSlide}>
           {presentation.slides.map((slide, i) => (
             <SlidePreview
               selected={currentSlide === i}
@@ -214,6 +229,9 @@ export default function App({
                   minimap: { enabled: false },
                   fontSize: 14,
                   mouseWheelZoom: true,
+                }}
+                onMount={(editor, monaco) => {
+                  htmlEditorRef.current = editor;
                 }}
                 theme="vs-dark"
                 defaultLanguage="html"
