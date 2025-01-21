@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Plus } from "lucide-react";
+import { LoaderCircle, Plus } from "lucide-react";
 
 import {
   Dialog,
@@ -19,7 +19,7 @@ import {
   getPresentations,
 } from "@/lib/supabase/actions";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useTransition } from "react";
 
 export interface PresentationInformation {
   title: string;
@@ -60,16 +60,18 @@ export function Card(preview: PresentationPreview) {
 
 export function RecentPage() {
   const [previews, setPreviews] = useState<PresentationPreview[]>([]);
+  const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    getPresentations().then((data) => {
+    startTransition(async () => {
+      const data = await getPresentations();
       if (typeof data === "string") {
         setError(data);
         return;
       }
       setPreviews(data);
-    });
+    })
   }, []);
 
   return (
@@ -118,11 +120,18 @@ export function RecentPage() {
           </Dialog>
         </div>
         {error && <p className="text-red-500">{error}</p>}
-        <div className="grid grid-cols-3 gap-4">
+        {!isPending ? (
+          <div className="grid grid-cols-3 gap-4">
           {previews.map((preview) => (
             <Card key={preview.path_id} {...preview} />
           ))}
         </div>
+        ) : (
+          <div className="flex justify-center items-center gap-x-2">
+            <LoaderCircle className="animate-spin" />
+            Loading...
+          </div>
+        )}
       </div>
     </main>
   );
