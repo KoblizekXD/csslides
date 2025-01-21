@@ -1,5 +1,6 @@
 "use server";
 
+import type { User } from "@supabase/supabase-js";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { randomId, removeAttrFromObject } from "../utils";
@@ -91,7 +92,7 @@ export async function getPresentations(): Promise<
 
 export async function createPresentation(
   name: string,
-  description: string,
+  description: string
 ): Promise<string | undefined> {
   const supabase = await createClient();
   const user = await supabase.auth.getUser();
@@ -122,7 +123,7 @@ export async function createPresentation(
 }
 
 export async function getPresentation(
-  pathId: string,
+  pathId: string
 ): Promise<string | Presentation> {
   const supabase = await createClient();
   const user = await supabase.auth.getUser();
@@ -162,7 +163,7 @@ export async function getPresentation(
 
 export async function createSlide(
   name: string,
-  presentation: Presentation,
+  presentation: Presentation
 ): Promise<Slide | undefined> {
   const supabase = await createClient();
 
@@ -210,4 +211,13 @@ export async function enableSharing(id: number): Promise<string | undefined> {
   }
 
   revalidatePath(`/shared/${id}`, "layout");
+}
+
+export async function getUser(): Promise<User | string> {
+  const supabase = await createClient();
+  const user = await supabase.auth.getUser();
+
+  if (user.error) return user.error.message;
+
+  return user.data.user;
 }

@@ -1,7 +1,14 @@
+import { createClient } from "@/lib/supabase/server";
 import { RecentPage } from "./recent";
+import { redirect } from "next/navigation";
 
-export default function Page() {
-  // <-- either here
+export default async function Page() {
+  const supabase = await createClient();
+  const user = await supabase.auth.getUser();
 
-  return <RecentPage />;
+  if (!user || user.error) {
+    redirect("/login");
+  }
+
+  return <RecentPage user={user.data.user} />;
 }
