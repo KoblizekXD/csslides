@@ -20,6 +20,8 @@ import {
 } from "@/lib/supabase/actions";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
+import { ShareDialog } from "@/components/share-dialog";
+import { useToast } from "@/hooks/use-toast";
 
 export interface PresentationInformation {
   title: string;
@@ -35,16 +37,19 @@ export interface Slide {
   styles: string;
 }
 
-export function Card(preview: PresentationPreview) {
+export function Card(defaultPreview: PresentationPreview) {
   const router = useRouter();
+  const { toast } = useToast();
+  const [preview, setPreview] = useState<PresentationPreview>(defaultPreview);
+
   return (
-    <div className="flex flex-col gap-y-2 bg-background border p-4 rounded shadow-md">
+    <div className="flex hover:scale-105 transition-transform flex-col gap-y-2 bg-background border p-4 rounded shadow-md">
       <h2 className="text-lg font-bold">{preview.name}</h2>
       <p className="text-sm text-gray-500">
         {preview.description || "No description provided."}
       </p>
       <p className="text-sm text-gray-500">
-        Last edited: {new Date(preview.created_at).toUTCString()}
+        Created at: {new Date(preview.created_at).toUTCString()}
       </p>
       <div className="flex gap-x-2">
         <Button
@@ -52,7 +57,15 @@ export function Card(preview: PresentationPreview) {
           className="flex justify-center">
           Open
         </Button>
-        <Button className="flex justify-center">Share</Button>
+        {preview.shared ? (
+          <Button onClick={() => {
+            navigator.clipboard.writeText(`https://csslides.7f454c46.xyz/shared/${preview.path_id}`).then(() => {
+              toast({ title: "Copied!", description: "URL has been copied to clipboard" })
+            })
+          }}>Copy URL</Button>
+        ) : <ShareDialog onSuccess={() => {
+          setPreview({ ...preview, shared: true });
+        }} presentation={preview} />}
       </div>
     </div>
   );
@@ -62,6 +75,7 @@ export function RecentPage() {
   const [previews, setPreviews] = useState<PresentationPreview[]>([]);
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
+  const [searchFilter, setSearchFilter] = useState<string | null>(null);
 
   useEffect(() => {
     startTransition(async () => {
@@ -80,7 +94,7 @@ export function RecentPage() {
       <hr className="w-full" />
       <div className="flex gap-y-4 flex-col">
         <div className="flex gap-x-2">
-          <Input placeholder="Search" />
+          <Input onChange={it => setSearchFilter(it.currentTarget.value)} placeholder="Search" />
           <Dialog>
             <DialogTrigger className="flex text-black font-semibold rounded-lg p-2 justify-center items-center gap-x-2 min-w-fit bg-white">
               <Plus />
@@ -122,7 +136,10 @@ export function RecentPage() {
         {error && <p className="text-red-500">{error}</p>}
         {!isPending ? (
           <div className="grid grid-cols-3 gap-4">
-          {previews.map((preview) => (
+          {previews.filter(preview => {
+            return preview.name.toLowerCase().includes(searchFilter?.toLowerCase() || "")
+              || preview.description?.toLowerCase().includes(searchFilter?.toLowerCase() || "");
+          }).map((preview) => (
             <Card key={preview.path_id} {...preview} />
           ))}
         </div>

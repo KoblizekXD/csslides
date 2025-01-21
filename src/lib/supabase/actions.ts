@@ -67,6 +67,7 @@ export interface Presentation {
   name: string;
   description: string;
   slides: Slide[];
+  shared: boolean;
 }
 
 export type PresentationPreview = Omit<Presentation, "slides">;
@@ -78,7 +79,7 @@ export async function getPresentations(): Promise<
 
   const { data, error } = await supabase
     .from("presentations")
-    .select("id, created_at, user_id, path_id, name, description")
+    .select("id, created_at, user_id, path_id, name, description, shared")
     .eq("user_id", (await supabase.auth.getUser())?.data.user?.id);
 
   if (error) {
@@ -109,7 +110,7 @@ export async function createPresentation(
     path_id: path,
     name,
     description,
-  } satisfies Omit<Presentation, "id" | "created_at" | "slides">;
+  } satisfies Omit<Presentation, "id" | "created_at" | "slides" | "shared">;
 
   const { error } = await supabase.from("presentations").insert(presentation);
 
@@ -194,4 +195,19 @@ export async function savePresentation(presentation: Presentation) {
   if (res.error) {
     return res.error.message;
   }
+}
+
+export async function enableSharing(id: number): Promise<string | undefined> {
+  const supabase = await createClient();
+
+  const { error } = await supabase
+    .from("presentations")
+    .update({ shared: true })
+    .eq("id", id);
+
+  if (error) {
+    return error.message;
+  }
+
+  revalidatePath(`/shared/${id}`, "layout");
 }
