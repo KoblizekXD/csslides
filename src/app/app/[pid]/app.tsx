@@ -29,6 +29,7 @@ import { Play } from "lucide-react";
 import type { editor } from "monaco-editor";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import DOMPurify from "dompurify";
 
 export default function App({
   presentation: defaultPresentation,
@@ -44,7 +45,6 @@ export default function App({
   );
   const previewRef = useRef<HTMLDivElement>(null);
   const htmlEditorRef = useRef<editor.IStandaloneCodeEditor>(null);
-  const cssEditorRef = useRef<editor.IStandaloneCodeEditor>(null);
   const slidePreviewRef = useRef<{ toggle: () => void }>(null);
   const [preview, setPreview] = useState<HTMLCanvasElement>();
 
@@ -112,8 +112,10 @@ export default function App({
     };
   }, [presentation]);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: It doesn't work otherwise lol
   useEffect(() => {
     if (currentSlide !== undefined) {
+      htmlEditorRef.current?.setValue(presentation.slides[currentSlide].html);
       if (previewRef.current) {
         html2canvas(previewRef.current).then((canvas) => {
           setPreview(canvas);
@@ -143,7 +145,18 @@ export default function App({
               Save <MenubarShortcut>⌘S</MenubarShortcut>
             </MenubarItem>
             <MenubarSeparator />
-            <MenubarItem>Share</MenubarItem>
+            <MenubarItem disabled={!presentation.shared} onClick={(it) => {
+              if (presentation.shared) {
+                navigator.clipboard.writeText(
+                  `https://csslides.7f454c46.xyz/shared/${presentation.path_id}`
+                ).then(() => {
+                  toast({
+                    title: "Copied!",
+                    description: "URL has been copied to clipboard",
+                  });
+                });
+              }
+            }}>{presentation.shared ? "Copy URL" : "Share"}</MenubarItem>
             <MenubarSeparator />
             <MenubarItem
               onClick={() => {
@@ -219,7 +232,7 @@ export default function App({
           >
             <TabsList className="self-start">
               <TabsTrigger value="html">HTML</TabsTrigger>
-              <TabsTrigger value="styles">Styles</TabsTrigger>
+              {/* <TabsTrigger value="styles">Styles</TabsTrigger> */}
             </TabsList>
             <TabsContent className="flex-1" value="html">
               <Editor
@@ -240,18 +253,14 @@ export default function App({
                     ? presentation.slides[currentSlide].html
                     : ""
                 }
-                value={
-                  currentSlide !== undefined
-                    ? presentation.slides[currentSlide].html
-                    : ""
-                }
+                
                 onChange={(text) => {
                   if (currentSlide !== undefined) {
                     setPresentation((prev) => {
                       const slides = [...prev.slides];
                       slides[currentSlide] = {
                         ...slides[currentSlide],
-                        html: text || "",
+                        html: DOMPurify.sanitize(text || ""),
                       };
                       return { ...prev, slides };
                     });
