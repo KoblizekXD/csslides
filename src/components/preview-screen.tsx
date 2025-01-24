@@ -23,7 +23,7 @@ export function PreviewScreen({
   return (
     <>
       <div className="fixed inset-0 bg-black bg-opacity-90 z-40" />
-      <div className="absolute text-muted-foreground gap-x-2 flex p-1 border brightness-50 border-muted left-1/2 top-3 items-center -translate-x-1/2 rounded bg-background z-[60]">
+      <div className="absolute text-muted-foreground gap-x-2 flex p-1 border brightness-50 border-muted left-1/2 top-3 items-center -translate-x-1/2 rounded bg-background z-60">
         <GripVertical size={20} className="stroke-muted-foreground brightness-75" />
         <X
           onClick={onClose}
@@ -34,7 +34,7 @@ export function PreviewScreen({
       </div>
       <div
         className={cn(
-          "absolute transition-opacity flex w-5/6 border-muted border top-1/2 left-1/2 rounded-xl shadow -translate-x-1/2 -translate-y-1/2 aspect-video bg-black z-50",
+          "absolute transition-opacity flex w-5/6 border-muted border top-1/2 left-1/2 rounded-xl shadow-sm -translate-x-1/2 -translate-y-1/2 aspect-video bg-black z-50",
           className
         )}
       >
