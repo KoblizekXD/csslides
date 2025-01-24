@@ -93,7 +93,7 @@ export async function getPresentations(): Promise<
 export async function createPresentation(
   name: string,
   description: string
-): Promise<string | undefined> {
+): Promise<string | PresentationPreview> {
   const supabase = await createClient();
   const user = await supabase.auth.getUser();
 
@@ -113,13 +113,16 @@ export async function createPresentation(
     description,
   } satisfies Omit<Presentation, "id" | "created_at" | "slides" | "shared">;
 
-  const { error } = await supabase.from("presentations").insert(presentation);
+  const { error, data } = await supabase.from("presentations").insert(presentation)
+    .select().single();
 
   if (error) {
     return error.message;
   }
 
   revalidatePath(`/app/${path}`, "layout");
+
+  return data;
 }
 
 export async function getPresentation(
@@ -220,4 +223,18 @@ export async function getUser(): Promise<User | string> {
   if (user.error) return user.error.message;
 
   return user.data.user;
+}
+
+export async function deletePresentation(
+  id: number
+): Promise<string | undefined> {
+  const supabase = await createClient();
+
+  const { error } = await supabase.from("presentations").delete().eq("id", id);
+
+  if (error) {
+    return error.message;
+  }
+
+  revalidatePath("/app/recent", "page");
 }

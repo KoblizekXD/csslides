@@ -28,7 +28,6 @@ import DOMPurify from "dompurify";
 import html2canvas from "html2canvas";
 import { Play } from "lucide-react";
 import type { editor } from "monaco-editor";
-import Head from "next/head";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
@@ -328,15 +327,9 @@ export default function App({
               </Button>
             </div>
             <div className="flex-1 flex items-center justify-center">
-              <Head>
-                <link
-                  href="https://unpkg.com/@tailwindcss/browser@4"
-                  rel="stylesheet"
-                />
-              </Head>
               <AspectRatio
                 ratio={16 / 9}
-                className="border bg-black rounded"
+                className="border rounded"
                 ref={previewRef}
               />
             </div>

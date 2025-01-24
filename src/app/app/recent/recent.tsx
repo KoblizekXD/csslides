@@ -18,6 +18,7 @@ import { useToast } from "@/hooks/use-toast";
 import {
   type PresentationPreview,
   createPresentation,
+  deletePresentation,
   getPresentations,
 } from "@/lib/supabase/actions";
 import type { User } from "@supabase/supabase-js";
@@ -85,6 +86,15 @@ export function Card(defaultPreview: PresentationPreview) {
             presentation={preview}
           />
         )}
+        <span
+          onClick={() => {
+            deletePresentation(preview.id);
+            router.push("/app");
+          }}
+          className="text-red-500 cursor-pointer select-none brightness-75 flex justify-center items-center underline"
+        >
+          Remove
+        </span>
       </div>
     </div>
   );
@@ -130,7 +140,7 @@ export function RecentPage({ user }: { user: User }) {
             placeholder="Search"
           />
           <Dialog>
-            <DialogTrigger className="flex text-black font-semibold rounded-lg p-2 justify-center items-center gap-x-2 min-w-fit bg-white">
+            <DialogTrigger className="flex text-black cursor-pointer hover:scale-105 transition-transform font-semibold rounded-lg p-2 justify-center items-center gap-x-2 min-w-fit bg-white">
               <Plus />
               Create New
             </DialogTrigger>
@@ -150,8 +160,10 @@ export function RecentPage({ user }: { user: User }) {
                     formData.get("title") as string,
                     formData.get("description") as string
                   ).then((data) => {
-                    if (data) {
+                    if (typeof data === "string") {
                       setError(data);
+                    } else {
+                      setPreviews([...previews, data]);
                     }
                   });
                 }}

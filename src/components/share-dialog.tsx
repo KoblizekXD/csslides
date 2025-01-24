@@ -27,7 +27,7 @@ export function ShareDialog({
 
   return (
     <Dialog>
-      <DialogTrigger className="flex px-2 text-sm font-medium text-black rounded-lg justify-center items-center gap-x-2 bg-white">
+      <DialogTrigger className="flex px-2 text-sm font-medium text-black cursor-pointer rounded-md justify-center items-center gap-x-2 bg-white">
         Share
       </DialogTrigger>
       <DialogContent>
