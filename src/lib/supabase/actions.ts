@@ -113,8 +113,11 @@ export async function createPresentation(
     description,
   } satisfies Omit<Presentation, "id" | "created_at" | "slides" | "shared">;
 
-  const { error, data } = await supabase.from("presentations").insert(presentation)
-    .select().single();
+  const { error, data } = await supabase
+    .from("presentations")
+    .insert(presentation)
+    .select()
+    .single();
 
   if (error) {
     return error.message;
@@ -237,4 +240,22 @@ export async function deletePresentation(
   }
 
   revalidatePath("/app/recent", "page");
+}
+
+export async function deleteSlide(
+  id: number,
+  presentation: Presentation
+): Promise<Presentation | string> {
+  const supabase = await createClient();
+
+  const { error } = await supabase.from("slides").delete().eq("id", id);
+
+  if (error) {
+    return error.message;
+  }
+
+  return {
+    ...presentation,
+    slides: presentation.slides.filter((slide) => slide.id !== id),
+  };
 }

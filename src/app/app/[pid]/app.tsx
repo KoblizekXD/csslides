@@ -21,8 +21,10 @@ import { useToast } from "@/hooks/use-toast";
 import {
   type Presentation,
   createSlide,
+  deleteSlide,
   savePresentation,
 } from "@/lib/supabase/actions";
+import { cn } from "@/lib/utils";
 import Editor from "@monaco-editor/react";
 import DOMPurify from "dompurify";
 import html2canvas from "html2canvas";
@@ -203,6 +205,29 @@ export default function App({
             >
               Redo <MenubarShortcut>⌘Y</MenubarShortcut>
             </MenubarItem>
+            <MenubarSeparator />
+            <MenubarItem
+              onClick={() => {
+                if (!currentSlide) return;
+                deleteSlide(
+                  presentation.slides[currentSlide].id,
+                  presentation
+                ).then((res) => {
+                  if (typeof res === "string") {
+                    toast({
+                      title: "Error! 😢",
+                      description: res,
+                    });
+                  } else {
+                    setPresentation(res);
+                    setCurrentSlide(undefined);
+                  }
+                });
+              }}
+              className="text-red-400"
+            >
+              Delete Slide
+            </MenubarItem>
           </MenubarContent>
         </MenubarMenu>
         <MenubarMenu>
@@ -241,7 +266,7 @@ export default function App({
             />
           ))}
         </SlidePreviewBar>
-        <div className="h-full flex-1 flex w-full rounded border p-2">
+        <div className={cn("h-full flex-1 flex w-full rounded border p-2", currentSlide === undefined && "invisible")}>
           <Tabs
             defaultValue="html"
             className="w-1/2 overflow-y-auto flex flex-col h-full"

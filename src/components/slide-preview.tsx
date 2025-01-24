@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeftToLine } from "lucide-react";
+import { ArrowLeftToLine, X } from "lucide-react";
 import React, {
   type MouseEventHandler,
   useEffect,
@@ -26,6 +26,7 @@ import {
 import { Button } from "./ui/button";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogFooter,
   DialogHeader,
@@ -101,8 +102,7 @@ export const SlidePreviewBar = ({
     () => {
       return {
         toggle() {
-          if (!removed)
-            setRemoved(true);
+          if (!removed) setRemoved(true);
           else setHidden(false);
         },
       };
@@ -144,7 +144,7 @@ export const SlidePreviewBar = ({
           </div>
         </ContextMenuTrigger>
         <ContextMenuContent>
-          <DialogTrigger asChild>
+          <DialogTrigger onClick={() => setDialogOpen(true)} asChild>
             <ContextMenuItem>
               New Slide <ContextMenuShortcut>⌘N</ContextMenuShortcut>
             </ContextMenuItem>
@@ -155,6 +155,13 @@ export const SlidePreviewBar = ({
         </ContextMenuContent>
       </ContextMenu>
       <DialogContent>
+        <DialogClose
+          onClick={() => setDialogOpen(false)}
+          className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-hidden focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground"
+        >
+          <X className="h-4 w-4" />
+          <span className="sr-only">Close</span>
+        </DialogClose>
         <form className="space-y-4">
           <DialogHeader>
             <DialogTitle>Create New Slide</DialogTitle>
