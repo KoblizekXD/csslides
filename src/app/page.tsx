@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { Button } from "@/components/ui/button";
 import { Presentation } from "lucide-react";
@@ -21,11 +21,23 @@ export default function Home() {
           <span className="-translate-y-0.5">csslides</span>
         </Link>
         <div className="ml-auto flex items-center justify-center gap-x-4">
-          <Link href={"/login"} className="hover:scale-105 transition-transform">Sign in</Link>
-          <Link href={"/signup"} className="text-emerald-400 transition-transform hover:scale-105 font-semibold">
+          <Link
+            href={"/login"}
+            className="hover:scale-105 transition-transform"
+          >
+            Sign in
+          </Link>
+          <Link
+            href={"/signup"}
+            className="text-emerald-400 transition-transform hover:scale-105 font-semibold"
+          >
             Sign up
           </Link>
-          <Link target="_blank" className="hover:scale-105 transition-transform" href={"https://github.com/KoblizekXD/csslides"}>
+          <Link
+            target="_blank"
+            className="hover:scale-105 transition-transform"
+            href={"https://github.com/KoblizekXD/csslides"}
+          >
             <svg
               width={24}
               height={24}
@@ -45,13 +57,27 @@ export default function Home() {
           <h1 className="text-6xl font-semibold">
             Create elegant persentations
           </h1>
-          <h1 className="text-4xl font-semibold">Using html and tailwind</h1>
+          <h1 className="text-4xl font-semibold">
+            Using html, css and tailwind*
+          </h1>
+          <h2 className="text-gray-500">*Tailwind support soon</h2>
         </div>
         <div className="mt-36 flex-1 p-2 overflow-y-hidden flex flex-col font-sans">
-          <Button onClick={() => {
-            router.push("/app");
-          }} className="cursor-pointer absolute w-32 hover:scale-110 transition-transform rounded-lg">Let me in!</Button>
-          <Image className="ml-auto border scale-90 rounded-xl overflow-y-hidden" src={"/image.png"} alt="this" width={1360} height={720} />
+          <Button
+            onClick={() => {
+              router.push("/app");
+            }}
+            className="cursor-pointer absolute w-32 hover:scale-110 transition-transform rounded-lg"
+          >
+            Let me in!
+          </Button>
+          <Image
+            className="ml-auto border scale-90 rounded-xl overflow-y-hidden"
+            src={"/image.png"}
+            alt="this"
+            width={1360}
+            height={720}
+          />
         </div>
       </div>
     </main>
