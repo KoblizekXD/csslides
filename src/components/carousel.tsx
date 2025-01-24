@@ -3,7 +3,7 @@
 import type { Slide } from "@/lib/supabase/actions";
 import { cn } from "@/lib/utils";
 import { ArrowLeft, ArrowRight } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AspectRatio } from "./ui/aspect-ratio";
 import { Button } from "./ui/button";
 
@@ -18,6 +18,7 @@ export function Carousel({
   slide?: number;
   onSlideChange?: (slide: number) => void;
 }) {
+  const ratioRef = useRef<HTMLDivElement>(null);
   const [currentSlide, setCurrentSlide] = useState<number | undefined>(
     items.length === 0 ? undefined : 0
   );
@@ -32,7 +33,15 @@ export function Carousel({
     if (onSlideChange) {
       onSlideChange(currentSlide ?? 0);
     }
-  }, [currentSlide, onSlideChange]);
+
+    if (ratioRef.current) {
+      
+      const shadowRoot = ratioRef.current.shadowRoot ? ratioRef.current.shadowRoot : ratioRef.current.attachShadow({
+        mode: "open",
+      });
+      shadowRoot.innerHTML = items[currentSlide ?? 0].html;
+    }
+  }, [currentSlide, onSlideChange, items]);
 
   return (
     <div
@@ -61,13 +70,7 @@ export function Carousel({
             </div>
           </AspectRatio>
         ) : (
-          <AspectRatio
-            ratio={16 / 9}
-            // biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation>
-            dangerouslySetInnerHTML={{
-              __html: items[currentSlide].html,
-            }}
-          />
+          <AspectRatio ref={ratioRef} ratio={16 / 9} />
         )}
       </div>
       <Button

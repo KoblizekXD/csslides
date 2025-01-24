@@ -24,12 +24,13 @@ import {
   savePresentation,
 } from "@/lib/supabase/actions";
 import Editor from "@monaco-editor/react";
+import DOMPurify from "dompurify";
 import html2canvas from "html2canvas";
 import { Play } from "lucide-react";
 import type { editor } from "monaco-editor";
+import Head from "next/head";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import DOMPurify from "dompurify";
 
 export default function App({
   presentation: defaultPresentation,
@@ -105,6 +106,15 @@ export default function App({
       }
     };
 
+    if (previewRef.current) {
+      const shadowRoot = previewRef.current.shadowRoot
+        ? previewRef.current.shadowRoot
+        : previewRef.current.attachShadow({
+            mode: "open",
+          });
+      shadowRoot.innerHTML = presentation.slides[currentSlide ?? 0].html;
+    }
+
     window.addEventListener("keydown", onKeydown);
 
     return () => {
@@ -145,18 +155,25 @@ export default function App({
               Save <MenubarShortcut>⌘S</MenubarShortcut>
             </MenubarItem>
             <MenubarSeparator />
-            <MenubarItem disabled={!presentation.shared} onClick={(it) => {
-              if (presentation.shared) {
-                navigator.clipboard.writeText(
-                  `https://csslides.7f454c46.xyz/shared/${presentation.path_id}`
-                ).then(() => {
-                  toast({
-                    title: "Copied!",
-                    description: "URL has been copied to clipboard",
-                  });
-                });
-              }
-            }}>{presentation.shared ? "Copy URL" : "Share"}</MenubarItem>
+            <MenubarItem
+              disabled={!presentation.shared}
+              onClick={(it) => {
+                if (presentation.shared) {
+                  navigator.clipboard
+                    .writeText(
+                      `https://csslides.7f454c46.xyz/shared/${presentation.path_id}`
+                    )
+                    .then(() => {
+                      toast({
+                        title: "Copied!",
+                        description: "URL has been copied to clipboard",
+                      });
+                    });
+                }
+              }}
+            >
+              {presentation.shared ? "Copy URL" : "Share"}
+            </MenubarItem>
             <MenubarSeparator />
             <MenubarItem
               onClick={() => {
@@ -253,7 +270,6 @@ export default function App({
                     ? presentation.slides[currentSlide].html
                     : ""
                 }
-                
                 onChange={(text) => {
                   if (currentSlide !== undefined) {
                     setPresentation((prev) => {
@@ -312,14 +328,13 @@ export default function App({
               </Button>
             </div>
             <div className="flex-1 flex items-center justify-center">
+              <Head>
+                <link
+                  href="https://unpkg.com/@tailwindcss/browser@4"
+                  rel="stylesheet"
+                />
+              </Head>
               <AspectRatio
-                // biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation>
-                dangerouslySetInnerHTML={{
-                  __html:
-                    currentSlide !== undefined
-                      ? presentation.slides[currentSlide].html
-                      : "",
-                }}
                 ratio={16 / 9}
                 className="border bg-black rounded"
                 ref={previewRef}
