@@ -67,12 +67,12 @@ export default function Home() {
             onClick={() => {
               router.push("/app");
             }}
-            className="cursor-pointer absolute w-32 hover:scale-110 transition-transform rounded-lg"
+            className="cursor-pointer w-32 hover:scale-110 transition-transform rounded-lg"
           >
             Let me in!
           </Button>
           <Image
-            className="ml-auto border scale-90 rounded-xl overflow-y-hidden"
+            className="ml-auto border mt-20 rounded-xl overflow-y-hidden"
             src={"/image.png"}
             alt="this"
             width={1360}
