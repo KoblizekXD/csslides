@@ -1,6 +1,7 @@
 "use client";
 
 import { Carousel } from "@/components/carousel";
+import { FullscreenPresentor } from "@/components/fullscreen-presentor";
 import { Button } from "@/components/ui/button";
 import {
   Tooltip,
@@ -10,7 +11,6 @@ import {
 } from "@/components/ui/tooltip";
 import type { Presentation } from "@/lib/supabase/actions";
 import { clamp } from "@/lib/utils";
-import { AspectRatio } from "@radix-ui/react-aspect-ratio";
 import { ExternalLink, Play } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -59,15 +59,10 @@ export function SharedPresentationPreview({
   return (
     <main className="h-screen flex flex-col w-full p-2">
       {isPresenting && (
-        <div className="fixed left-0 top-0 bg-black right-0 bottom-0 z-50">
-          <AspectRatio
-            ratio={16 / 9}
-            // biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation>
-            dangerouslySetInnerHTML={{
-              __html: presentation.slides[currentSlide ?? 0].html,
-            }}
-          />
-        </div>
+        <FullscreenPresentor
+          slides={presentation.slides}
+          disableFullscreen={() => setIsPresenting(false)}
+        />
       )}
       <nav className="flex self-start w-full items-center justify-between">
         <Button

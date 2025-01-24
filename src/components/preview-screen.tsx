@@ -2,8 +2,9 @@
 
 import type { Presentation } from "@/lib/supabase/actions";
 import { clamp, cn } from "@/lib/utils";
-import { ArrowLeft, ArrowRight, GripVertical, X } from "lucide-react";
+import { ArrowLeft, ArrowRight, GripVertical, Play, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { FullscreenPresentor } from "./fullscreen-presentor";
 
 interface PreviewScreenProps {
   className?: string;
@@ -19,6 +20,7 @@ export function PreviewScreen({
   startAt = 0,
 }: PreviewScreenProps) {
   const [startAtSlide, setStartAtSlide] = useState(startAt);
+  const [fsPresenting, setFsPresenting] = useState(false);
   const previewRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -34,12 +36,29 @@ export function PreviewScreen({
 
   return (
     <>
+      {fsPresenting && (
+        <FullscreenPresentor
+          slides={presentation.slides}
+          disableFullscreen={() => {
+            setFsPresenting(false);
+          }}
+        />
+      )}
       <div className="fixed inset-0 bg-black bg-opacity-90 z-40" />
       <div className="absolute text-muted-foreground gap-x-2 flex p-1 border brightness-50 border-muted left-1/2 top-3 items-center -translate-x-1/2 rounded bg-background z-60">
         <GripVertical
           size={20}
           className="stroke-muted-foreground brightness-75"
         />
+        <span className="cursor-pointer" title="Start presentation">
+          <Play
+            size={20}
+            onClick={() => {
+              document.documentElement.requestFullscreen();
+              setFsPresenting(true);
+            }}
+          />
+        </span>
         <X
           onClick={onClose}
           className="hover:bg-muted cursor-pointer stroke-muted-foreground rounded brightness-75 transition-colors"
