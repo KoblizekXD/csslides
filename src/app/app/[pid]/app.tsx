@@ -266,7 +266,12 @@ export default function App({
             />
           ))}
         </SlidePreviewBar>
-        <div className={cn("h-full flex-1 flex w-full rounded border p-2", currentSlide === undefined && "invisible")}>
+        <div
+          className={cn(
+            "h-full flex-1 flex w-full rounded border p-2",
+            currentSlide === undefined && "invisible"
+          )}
+        >
           <Tabs
             defaultValue="html"
             className="w-1/2 overflow-y-auto flex flex-col h-full"
