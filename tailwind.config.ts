@@ -1,7 +1,7 @@
 import type { Config } from "tailwindcss";
 
 export default {
-  darkMode: ["class"],
+  darkMode: "class",
   content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -63,22 +63,4 @@ export default {
     },
   },
   plugins: [require("tailwindcss-animate")],
-  safelist: [
-    {
-      // Disables Tailwind's purging unused CSS, remove if causes lag?
-      pattern: /bg-*/,
-    },
-    {
-      pattern: /text-*/,
-    },
-    {
-      pattern: /flex-*/,
-    },
-    {
-      pattern: /w-*/,
-    },
-    {
-      pattern: /h-*/,
-    },
-  ],
 } satisfies Config;
