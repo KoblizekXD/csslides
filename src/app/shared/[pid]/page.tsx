@@ -8,6 +8,8 @@ export default async function SharedPresentation({
   params: Promise<{ pid: string }>;
 }) {
   const pid = (await params).pid;
+  console.log(pid);
+  
   const presentation = await getPresentation(pid);
   
   if (typeof presentation === "string")

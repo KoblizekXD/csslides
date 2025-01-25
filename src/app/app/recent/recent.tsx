@@ -127,7 +127,7 @@ export function RecentPage({ user }: { user: User }) {
           </span>
         ) : (
           <Link href={"/logout"} className="text-gray-500 underline">
-            Logged in as {user?.email}. Click to logout.
+            Logged in as {user?.email || "Anonymous"}. Click to logout.
           </Link>
         )}
       </div>

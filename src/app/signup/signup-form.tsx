@@ -15,7 +15,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { signup } from "@/lib/supabase/actions";
+import { signUpAnonymously, signup } from "@/lib/supabase/actions";
 import { LoaderCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -61,7 +61,8 @@ export function SignupForm() {
       {error && <p className="text-red-500">{error}</p>}
       <form
         className="flex bg-black gap-y-4 flex-col border w-1/5 h-1/2 shadow-xl rounded-xl p-4"
-        onSubmit={form.handleSubmit(onSubmit)}>
+        onSubmit={form.handleSubmit(onSubmit)}
+      >
         <FormField
           control={form.control}
           name="username"
@@ -112,7 +113,8 @@ export function SignupForm() {
           <Button
             type="submit"
             className="flex justify-center w-1/2"
-            disabled={loading}>
+            disabled={loading}
+          >
             {loading && <LoaderCircle className="animate-spin" />}
             Signup
           </Button>
@@ -123,10 +125,27 @@ export function SignupForm() {
             disabled={loading}
             onClick={() => {
               router.push("/login");
-            }}>
+            }}
+          >
             Login instead
           </Button>
         </div>
+        <Button
+          onClick={() => {
+            setLoading(true);
+            signUpAnonymously().then((error) => {
+              if (error) {
+                setError(error);
+                setLoading(false);
+              }
+            });
+          }}
+          type="button"
+          className="flex justify-center"
+          disabled={loading}
+        >
+          Use anonymous account
+        </Button>
       </form>
     </Form>
   );

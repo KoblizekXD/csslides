@@ -107,7 +107,7 @@ export default function App({
       }
     };
 
-    if (previewRef.current) {
+    if (previewRef.current && currentSlide !== undefined) {
       const shadowRoot = previewRef.current.shadowRoot
         ? previewRef.current.shadowRoot
         : previewRef.current.attachShadow({

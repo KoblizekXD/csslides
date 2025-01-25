@@ -51,6 +51,19 @@ export async function signup(formData: {
   redirect("/app");
 }
 
+export async function signUpAnonymously() {
+  const supabase = await createClient();
+
+  const res = await supabase.auth.signInAnonymously();
+
+  if (res.error) {
+    return res.error.message;
+  }
+
+  revalidatePath("/", "layout");
+  redirect("/app");
+}
+
 export interface Slide {
   id: number;
   created_at: string;

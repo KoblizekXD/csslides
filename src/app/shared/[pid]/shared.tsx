@@ -10,7 +10,6 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import type { Presentation } from "@/lib/supabase/actions";
-import { clamp } from "@/lib/utils";
 import { ExternalLink, Play } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -21,40 +20,19 @@ export function SharedPresentationPreview({
   presentation: Presentation;
 }) {
   const [isPresenting, setIsPresenting] = useState(false);
-  const [currentSlide, setCurrentSlide] = useState<number | undefined>(
-    presentation.slides.length === 0 ? undefined : 0
-  );
 
   useEffect(() => {
-    const handleKeydown = (event: KeyboardEvent) => {
-      if (event.key === "ArrowRight") {
-        setCurrentSlide((prev) =>
-          prev === undefined
-            ? undefined
-            : clamp(prev + 1, 0, presentation.slides.length - 1)
-        );
-      } else if (event.key === "ArrowLeft") {
-        setCurrentSlide((prev) =>
-          prev === undefined
-            ? undefined
-            : clamp(prev - 1, 0, presentation.slides.length - 1)
-        );
-      }
-    };
-
     const handleFullscreenChange = () => {
       if (!document.fullscreenElement) {
         setIsPresenting(false);
       }
     };
 
-    document.addEventListener("keydown", handleKeydown);
     document.addEventListener("fullscreenchange", handleFullscreenChange);
     return () => {
-      document.removeEventListener("keydown", handleKeydown);
       document.removeEventListener("fullscreenchange", handleFullscreenChange);
     };
-  }, [presentation]);
+  }, []);
 
   return (
     <main className="h-screen flex flex-col w-full p-2">
