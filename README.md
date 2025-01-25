@@ -20,7 +20,14 @@ We all hate PowerPoint, right? Why not write our presentations in something deve
 1. Sign in with your email address(Don't worry, I won't send you anything!).
 2. Create a new presentation.
 3. Write your slides in HTML and CSS.
-4. Save with the `Save` button or `<Ctrl+S>`.
+4. Create new slides by right clicking inside the slides preview area and delete them in the `Edit` tab.
+5. Save with the `Save` button or `<Ctrl+S>`.
+
+## Sharing
+
+1. Enable sharing by clicking the `Share` button inside the recent presentation list.
+2. Copy the URL and share it with others.
+3. Others will be able to view your presentation without signing in.
 
 ## Licensing
 
