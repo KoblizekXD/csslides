@@ -21,10 +21,10 @@ import {
   deletePresentation,
   getPresentations,
 } from "@/lib/supabase/actions";
-import type { User } from "@supabase/supabase-js";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
+import type { User } from "@supabase/supabase-js";
 
 export interface PresentationInformation {
   title: string;
@@ -57,7 +57,8 @@ export function Card(defaultPreview: PresentationPreview) {
       <div className="flex gap-x-2">
         <Button
           onClick={() => router.push(`/app/${preview.path_id}`)}
-          className="flex justify-center">
+          className="flex justify-center"
+        >
           Open
         </Button>
         {preview.shared ? (
@@ -65,7 +66,7 @@ export function Card(defaultPreview: PresentationPreview) {
             onClick={() => {
               navigator.clipboard
                 .writeText(
-                  `https://csslides.7f454c46.xyz/shared/${preview.path_id}`,
+                  `https://csslides.7f454c46.xyz/shared/${preview.path_id}`
                 )
                 .then(() => {
                   toast({
@@ -73,7 +74,8 @@ export function Card(defaultPreview: PresentationPreview) {
                     description: "URL has been copied to clipboard",
                   });
                 });
-            }}>
+            }}
+          >
             Copy URL
           </Button>
         ) : (
@@ -89,7 +91,8 @@ export function Card(defaultPreview: PresentationPreview) {
             deletePresentation(preview.id);
             router.push("/app");
           }}
-          className="text-red-500 cursor-pointer select-none brightness-75 flex justify-center items-center underline">
+          className="text-red-500 cursor-pointer select-none brightness-75 flex justify-center items-center underline"
+        >
           Remove
         </span>
       </div>
@@ -116,16 +119,26 @@ export function RecentPage({ user }: { user: User }) {
 
   return (
     <main className="min-h-screen p-20 flex flex-col gap-y-4 bg-background">
-      <div className="fixed left-1/2 top-2 -translate-x-1/2">
+      <div className="fixed right-4 top-4">
         {isPending ? (
           <span className="flex justify-center text-gray-500 items-center">
             <LoaderCircle className="animate-spin" />
             Loading...
           </span>
         ) : (
-          <Link href={"/logout"} className="text-gray-500 underline">
-            Logged in as {user?.email || "Anonymous"}. Click to logout.
-          </Link>
+          <div className="flex items-center gap-x-2">
+            <div className="flex flex-col gap-y-1">
+              <span>
+                {user.email || user.phone || "Anonymous"}
+              </span>
+              <Link
+                className="text-sm text-gray-500 underline ml-auto"
+                href={"/logout"}
+              >
+                Logout
+              </Link>
+            </div>
+          </div>
         )}
       </div>
       <h1 className="text-3xl font-bold">Recent presentations</h1>
@@ -155,7 +168,7 @@ export function RecentPage({ user }: { user: User }) {
                   const formData = new FormData(fd.currentTarget);
                   createPresentation(
                     formData.get("title") as string,
-                    formData.get("description") as string,
+                    formData.get("description") as string
                   ).then((data) => {
                     if (typeof data === "string") {
                       setError(data);
@@ -164,7 +177,8 @@ export function RecentPage({ user }: { user: User }) {
                     }
                   });
                 }}
-                className="flex flex-col gap-y-2">
+                className="flex flex-col gap-y-2"
+              >
                 <Input name="title" required placeholder="Title" />
                 <Input name="description" placeholder="Description" />
                 <DialogClose asChild>
