@@ -1,13 +1,28 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
 import { Presentation } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect } from "react";
 
 export default function Home() {
+  const queryParams = useSearchParams();
+  const { toast } = useToast();
   const router = useRouter();
+
+  useEffect(() => {
+    if (queryParams.has("error")) {
+      setTimeout(() => {
+        toast({
+          title: "Error! 😢",
+          description: decodeURIComponent(queryParams.get("error") || ""),
+        });
+      });
+    }
+  }, [queryParams, toast]);
 
   return (
     <main className="max-h-screen overflow-y-hidden flex flex-col w-full">

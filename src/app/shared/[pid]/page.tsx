@@ -13,7 +13,7 @@ export default async function SharedPresentation({
   const presentation = await getPresentation(pid, false);
   
   if (typeof presentation === "string")
-    return redirect(`/?error=${presentation}`);
+    return redirect(`/?error=${encodeURIComponent(presentation)}`);
 
   return <SharedPresentationPreview presentation={presentation} />
 }
