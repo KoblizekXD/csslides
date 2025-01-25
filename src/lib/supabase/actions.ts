@@ -234,6 +234,21 @@ export async function enableSharing(id: number): Promise<string | undefined> {
   revalidatePath(`/shared/${id}`, "layout");
 }
 
+export async function disableSharing(id: number): Promise<string | undefined> {
+  const supabase = await createClient();
+
+  const { error } = await supabase
+    .from("presentations")
+    .update({ shared: false })
+    .eq("id", id);
+
+  if (error) {
+    return error.message;
+  }
+
+  revalidatePath(`/shared/${id}`, "layout");
+}
+
 export async function getUser(): Promise<User | string> {
   const supabase = await createClient();
   const user = await supabase.auth.getUser();

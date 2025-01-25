@@ -19,12 +19,13 @@ import {
   type PresentationPreview,
   createPresentation,
   deletePresentation,
+  disableSharing,
   getPresentations,
 } from "@/lib/supabase/actions";
+import type { User } from "@supabase/supabase-js";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
-import type { User } from "@supabase/supabase-js";
 
 export interface PresentationInformation {
   title: string;
@@ -95,6 +96,17 @@ export function Card(defaultPreview: PresentationPreview) {
         >
           Remove
         </span>
+        {preview.shared && (
+          <span
+            onClick={() => {
+              disableSharing(preview.id);
+              router.push("/app");
+            }}
+            className="text-red-500 cursor-pointer select-none brightness-75 flex justify-center items-center underline"
+          >
+            Disable sharing
+          </span>
+        )}
       </div>
     </div>
   );
@@ -128,9 +140,7 @@ export function RecentPage({ user }: { user: User }) {
         ) : (
           <div className="flex items-center gap-x-2">
             <div className="flex flex-col gap-y-1">
-              <span>
-                {user.email || user.phone || "Anonymous"}
-              </span>
+              <span>{user.email || user.phone || "Anonymous"}</span>
               <Link
                 className="text-sm text-gray-500 underline ml-auto"
                 href={"/logout"}

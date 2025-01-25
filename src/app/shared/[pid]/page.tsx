@@ -14,6 +14,8 @@ export default async function SharedPresentation({
 
   if (typeof presentation === "string")
     return redirect(`/?error=${encodeURIComponent(presentation)}`);
+  if (!presentation.shared)
+    return redirect(`/?error=${encodeURIComponent("Presentation not shared")}`);
 
   return <SharedPresentationPreview presentation={presentation} />;
 }
