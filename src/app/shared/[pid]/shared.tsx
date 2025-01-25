@@ -48,8 +48,7 @@ export function SharedPresentationPreview({
             document.documentElement.requestFullscreen();
             setIsPresenting(true);
           }}
-          className="flex"
-        >
+          className="flex">
           <Play />
           Present
         </Button>
@@ -65,8 +64,7 @@ export function SharedPresentationPreview({
         </TooltipProvider>
         <Link
           href={"/"}
-          className="text-gray-500 gap-x-2 underline flex items-center"
-        >
+          className="text-gray-500 gap-x-2 underline flex items-center">
           Home
           <ExternalLink size={16} />
         </Link>

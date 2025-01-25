@@ -53,8 +53,7 @@ export const SlidePreview = ({
       onClick={onSelected}
       className={`rounded cursor-pointer hover:bg-muted transition-colors duration-200 p-1 select-none ${
         selected && "bg-muted"
-      }`}
-    >
+      }`}>
       <AspectRatio ratio={16 / 9}>
         {!preview && <Skeleton className="w-full h-full" />}
         {preview && <img src={preview.toDataURL()} alt="Wow" />}
@@ -107,7 +106,7 @@ export const SlidePreviewBar = ({
         },
       };
     },
-    [removed]
+    [removed],
   );
 
   useEffect(() => {
@@ -123,8 +122,7 @@ export const SlidePreviewBar = ({
               width: removed ? "0" : "11rem",
               display: hidden ? "none" : "block",
             }}
-            className="flex p-1 gap-y-1 transition-all duration-200 flex-col w-44 rounded border overflow-y-scroll"
-          >
+            className="flex p-1 gap-y-1 transition-all duration-200 flex-col w-44 rounded border overflow-y-scroll">
             <div className="flex items-center gap-x-1 p-1">
               <span className="font-bold text-sm">Slides</span>
               <span className="ml-auto" onClick={() => setRemoved(true)}>
@@ -157,8 +155,7 @@ export const SlidePreviewBar = ({
       <DialogContent>
         <DialogClose
           onClick={() => setDialogOpen(false)}
-          className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-hidden focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground"
-        >
+          className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-hidden focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
           <X className="h-4 w-4" />
           <span className="sr-only">Close</span>
         </DialogClose>
@@ -176,8 +173,7 @@ export const SlidePreviewBar = ({
                 createSlide?.(fd.get("name") as string);
                 setDialogOpen(false);
               }}
-              type="submit"
-            >
+              type="submit">
               Create
             </Button>
           </DialogFooter>

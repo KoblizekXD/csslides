@@ -71,30 +71,27 @@ export function PreviewScreen({
       <div
         className={cn(
           "absolute transition-opacity flex w-5/6 border-muted border top-1/2 left-1/2 rounded-xl shadow-sm -translate-x-1/2 -translate-y-1/2 aspect-video bg-black z-50",
-          className
-        )}
-      >
+          className,
+        )}>
         <div
           onClick={() =>
             setStartAtSlide((prev) =>
-              clamp(prev - 1, 0, presentation.slides.length - 1)
+              clamp(prev - 1, 0, presentation.slides.length - 1),
             )
           }
           title="Previous slide"
-          className="absolute transition-colors p-1 hover:bg-muted top-1/2 rounded-full cursor-pointer -left-16 bg-background border border-muted"
-        >
+          className="absolute transition-colors p-1 hover:bg-muted top-1/2 rounded-full cursor-pointer -left-16 bg-background border border-muted">
           <ArrowLeft size={28} className="stroke-muted-foreground" />
         </div>
         <div ref={previewRef} className="flex-1 m-1" />
         <div
           onClick={() =>
             setStartAtSlide((prev) =>
-              clamp(prev + 1, 0, presentation.slides.length - 1)
+              clamp(prev + 1, 0, presentation.slides.length - 1),
             )
           }
           title="Next slide"
-          className="absolute transition-colors p-1 hover:bg-muted top-1/2 rounded-full cursor-pointer -right-16 bg-background border border-muted"
-        >
+          className="absolute transition-colors p-1 hover:bg-muted top-1/2 rounded-full cursor-pointer -right-16 bg-background border border-muted">
           <ArrowRight size={28} className="stroke-muted-foreground" />
         </div>
       </div>

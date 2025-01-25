@@ -105,7 +105,7 @@ export async function getPresentations(): Promise<
 
 export async function createPresentation(
   name: string,
-  description: string
+  description: string,
 ): Promise<string | PresentationPreview> {
   const supabase = await createClient();
   const user = await supabase.auth.getUser();
@@ -143,7 +143,7 @@ export async function createPresentation(
 
 export async function getPresentation(
   pathId: string,
-  requireUser = false
+  requireUser = false,
 ): Promise<string | Presentation> {
   const supabase = await createClient();
 
@@ -161,7 +161,10 @@ export async function getPresentation(
 
   const res = result.data as Presentation;
 
-  if (requireUser && !user || (user.data.user && res.user_id !== user.data.user.id)) {
+  if (
+    (requireUser && !user) ||
+    (user.data.user && res.user_id !== user.data.user.id)
+  ) {
     return "Not authorized";
   }
 
@@ -181,7 +184,7 @@ export async function getPresentation(
 
 export async function createSlide(
   name: string,
-  presentation: Presentation
+  presentation: Presentation,
 ): Promise<Slide | undefined> {
   const supabase = await createClient();
 
@@ -241,7 +244,7 @@ export async function getUser(): Promise<User | string> {
 }
 
 export async function deletePresentation(
-  id: number
+  id: number,
 ): Promise<string | undefined> {
   const supabase = await createClient();
 
@@ -256,7 +259,7 @@ export async function deletePresentation(
 
 export async function deleteSlide(
   id: number,
-  presentation: Presentation
+  presentation: Presentation,
 ): Promise<Presentation | string> {
   const supabase = await createClient();
 

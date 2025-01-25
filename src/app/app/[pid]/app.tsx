@@ -43,7 +43,7 @@ export default function App({
   const [presentation, setPresentation] = useState(defaultPresentation);
   const [showPreview, setShowPreview] = useState(false);
   const [currentSlide, setCurrentSlide] = useState<number | undefined>(
-    defaultPresentation.slides.length ? 0 : undefined
+    defaultPresentation.slides.length ? 0 : undefined,
   );
   const previewRef = useRef<HTMLDivElement>(null);
   const htmlEditorRef = useRef<editor.IStandaloneCodeEditor>(null);
@@ -162,7 +162,7 @@ export default function App({
                 if (presentation.shared) {
                   navigator.clipboard
                     .writeText(
-                      `https://csslides.7f454c46.xyz/shared/${presentation.path_id}`
+                      `https://csslides.7f454c46.xyz/shared/${presentation.path_id}`,
                     )
                     .then(() => {
                       toast({
@@ -171,8 +171,7 @@ export default function App({
                       });
                     });
                 }
-              }}
-            >
+              }}>
               {presentation.shared ? "Copy URL" : "Share"}
             </MenubarItem>
             <MenubarSeparator />
@@ -182,8 +181,7 @@ export default function App({
                   router.push("/app/recent");
                 });
               }}
-              className="text-red-400"
-            >
+              className="text-red-400">
               Exit
             </MenubarItem>
           </MenubarContent>
@@ -194,15 +192,13 @@ export default function App({
             <MenubarItem
               onClick={() => {
                 htmlEditorRef.current?.trigger("csslides", "undo", null);
-              }}
-            >
+              }}>
               Undo <MenubarShortcut>⌘Z</MenubarShortcut>
             </MenubarItem>
             <MenubarItem
               onClick={() => {
                 htmlEditorRef.current?.trigger("csslides", "redo", null);
-              }}
-            >
+              }}>
               Redo <MenubarShortcut>⌘Y</MenubarShortcut>
             </MenubarItem>
             <MenubarSeparator />
@@ -211,7 +207,7 @@ export default function App({
                 if (!currentSlide) return;
                 deleteSlide(
                   presentation.slides[currentSlide].id,
-                  presentation
+                  presentation,
                 ).then((res) => {
                   if (typeof res === "string") {
                     toast({
@@ -224,8 +220,7 @@ export default function App({
                   }
                 });
               }}
-              className="text-red-400"
-            >
+              className="text-red-400">
               Delete Slide
             </MenubarItem>
           </MenubarContent>
@@ -240,8 +235,7 @@ export default function App({
                   onClick={() => {
                     if (slidePreviewRef.current)
                       slidePreviewRef.current.toggle();
-                  }}
-                >
+                  }}>
                   Slides
                 </MenubarItem>
               </MenubarSubContent>
@@ -269,13 +263,11 @@ export default function App({
         <div
           className={cn(
             "h-full flex-1 flex w-full rounded border p-2",
-            currentSlide === undefined && "invisible"
-          )}
-        >
+            currentSlide === undefined && "invisible",
+          )}>
           <Tabs
             defaultValue="html"
-            className="w-1/2 overflow-y-auto flex flex-col h-full"
-          >
+            className="w-1/2 overflow-y-auto flex flex-col h-full">
             <TabsList className="self-start">
               <TabsTrigger value="html">HTML</TabsTrigger>
               {/* <TabsTrigger value="styles">Styles</TabsTrigger> */}
@@ -350,8 +342,7 @@ export default function App({
               <h1 className="text-2xl font-extrabold">Preview</h1>
               <Button
                 onClick={() => setShowPreview(true)}
-                className="ml-auto bg-green-600 hover:bg-muted text-white flex justify-center"
-              >
+                className="ml-auto bg-green-600 hover:bg-muted text-white flex justify-center">
                 <Play />
                 Present
               </Button>

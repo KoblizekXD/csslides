@@ -18,10 +18,10 @@ import { Button } from "./ui/button";
 
 export function ShareDialog({
   presentation,
-  onSuccess
+  onSuccess,
 }: {
   presentation: PresentationPreview;
-  onSuccess?: () => void,
+  onSuccess?: () => void;
 }) {
   const { toast } = useToast();
 
@@ -54,8 +54,7 @@ export function ShareDialog({
               }
             });
           }}
-          className="flex flex-col gap-y-2"
-        >
+          className="flex flex-col gap-y-2">
           <DialogClose asChild>
             <Button type="submit" className="w-1/6">
               Yes please!

@@ -16,18 +16,22 @@ export function FullscreenPresentor({
 }: FullscreenPresentorProps) {
   const shadowRef = useRef<HTMLDivElement>(null);
   const [currentSlide, setCurrentSlide] = useState<number | undefined>(
-    slides ? 0 : undefined
+    slides ? 0 : undefined,
   );
 
   useEffect(() => {
     const handleKeydown = (event: KeyboardEvent) => {
       if (event.key === "ArrowRight") {
         setCurrentSlide((prev) =>
-          prev === undefined ? undefined : clamp(prev + 1, 0, slides.length - 1)
+          prev === undefined
+            ? undefined
+            : clamp(prev + 1, 0, slides.length - 1),
         );
       } else if (event.key === "ArrowLeft") {
         setCurrentSlide((prev) =>
-          prev === undefined ? undefined : clamp(prev - 1, 0, slides.length - 1)
+          prev === undefined
+            ? undefined
+            : clamp(prev - 1, 0, slides.length - 1),
         );
       }
     };

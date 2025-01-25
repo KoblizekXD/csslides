@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
-import { RecentPage } from "./recent";
 import { redirect } from "next/navigation";
+import { RecentPage } from "./recent";
 
 export default async function Page() {
   const supabase = await createClient();

@@ -17,7 +17,7 @@ const jetbrainsMono = JetBrains_Mono({
 const cabin = Cabin({
   variable: "--font-cabin",
   subsets: ["latin"],
-})
+});
 
 export const metadata: Metadata = {
   title: "CSS Slides",

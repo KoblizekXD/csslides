@@ -57,8 +57,7 @@ export function Card(defaultPreview: PresentationPreview) {
       <div className="flex gap-x-2">
         <Button
           onClick={() => router.push(`/app/${preview.path_id}`)}
-          className="flex justify-center"
-        >
+          className="flex justify-center">
           Open
         </Button>
         {preview.shared ? (
@@ -66,7 +65,7 @@ export function Card(defaultPreview: PresentationPreview) {
             onClick={() => {
               navigator.clipboard
                 .writeText(
-                  `https://csslides.7f454c46.xyz/shared/${preview.path_id}`
+                  `https://csslides.7f454c46.xyz/shared/${preview.path_id}`,
                 )
                 .then(() => {
                   toast({
@@ -74,8 +73,7 @@ export function Card(defaultPreview: PresentationPreview) {
                     description: "URL has been copied to clipboard",
                   });
                 });
-            }}
-          >
+            }}>
             Copy URL
           </Button>
         ) : (
@@ -91,8 +89,7 @@ export function Card(defaultPreview: PresentationPreview) {
             deletePresentation(preview.id);
             router.push("/app");
           }}
-          className="text-red-500 cursor-pointer select-none brightness-75 flex justify-center items-center underline"
-        >
+          className="text-red-500 cursor-pointer select-none brightness-75 flex justify-center items-center underline">
           Remove
         </span>
       </div>
@@ -158,7 +155,7 @@ export function RecentPage({ user }: { user: User }) {
                   const formData = new FormData(fd.currentTarget);
                   createPresentation(
                     formData.get("title") as string,
-                    formData.get("description") as string
+                    formData.get("description") as string,
                   ).then((data) => {
                     if (typeof data === "string") {
                       setError(data);
@@ -167,8 +164,7 @@ export function RecentPage({ user }: { user: User }) {
                     }
                   });
                 }}
-                className="flex flex-col gap-y-2"
-              >
+                className="flex flex-col gap-y-2">
                 <Input name="title" required placeholder="Title" />
                 <Input name="description" placeholder="Description" />
                 <DialogClose asChild>

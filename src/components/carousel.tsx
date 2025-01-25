@@ -20,7 +20,7 @@ export function Carousel({
 }) {
   const ratioRef = useRef<HTMLDivElement>(null);
   const [currentSlide, setCurrentSlide] = useState<number | undefined>(
-    items.length === 0 ? undefined : 0
+    items.length === 0 ? undefined : 0,
   );
 
   useEffect(() => {
@@ -35,10 +35,11 @@ export function Carousel({
     }
 
     if (ratioRef.current) {
-      
-      const shadowRoot = ratioRef.current.shadowRoot ? ratioRef.current.shadowRoot : ratioRef.current.attachShadow({
-        mode: "open",
-      });
+      const shadowRoot = ratioRef.current.shadowRoot
+        ? ratioRef.current.shadowRoot
+        : ratioRef.current.attachShadow({
+            mode: "open",
+          });
       shadowRoot.innerHTML = items[currentSlide ?? 0].html;
     }
   }, [currentSlide, onSlideChange, items]);
@@ -47,19 +48,17 @@ export function Carousel({
     <div
       className={cn(
         "w-full gap-x-4 p-2 flex items-center justify-center",
-        className
-      )}
-    >
+        className,
+      )}>
       <Button
         title="Previous slide"
         className="max-w-fit rounded-full"
         onClick={() => {
           setCurrentSlide((prev) =>
-            prev === undefined ? undefined : prev - 1
+            prev === undefined ? undefined : prev - 1,
           );
         }}
-        disabled={currentSlide === 0 || items.length === 0}
-      >
+        disabled={currentSlide === 0 || items.length === 0}>
         <ArrowLeft />
       </Button>
       <div className="shadow-xl flex flex-nowrap w-3/4 overflow-x-hidden items-center rounded-xl border">
@@ -78,11 +77,10 @@ export function Carousel({
         className="max-w-fit rounded-full"
         onClick={() => {
           setCurrentSlide((prev) =>
-            prev === undefined ? undefined : prev + 1
+            prev === undefined ? undefined : prev + 1,
           );
         }}
-        disabled={currentSlide === items.length - 1 || items.length === 0}
-      >
+        disabled={currentSlide === items.length - 1 || items.length === 0}>
         <ArrowRight />
       </Button>
     </div>
