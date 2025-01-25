@@ -142,17 +142,12 @@ export async function createPresentation(
 }
 
 export async function getPresentation(
-  pathId: string
+  pathId: string,
+  requireUser = false
 ): Promise<string | Presentation> {
   const supabase = await createClient();
-  const user = await supabase.auth.getUser();
 
-  if (!user) {
-    return "Not authenticated";
-  }
-  if (user.error) {
-    return user.error.message;
-  }
+  const user = await supabase.auth.getUser();
 
   const result = await supabase
     .from("presentations")
@@ -165,6 +160,10 @@ export async function getPresentation(
   }
 
   const res = result.data as Presentation;
+
+  if (requireUser && !user || (user.data.user && res.user_id !== user.data.user.id)) {
+    return "Not authorized";
+  }
 
   const slides = await supabase
     .from("slides")
